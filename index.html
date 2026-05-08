@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>曹亚苓不要熬夜</title>
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+}
+
+body{
+    overflow:hidden;
+    background:black;
+    font-family:"Microsoft YaHei";
+}
+
+canvas{
+    position:absolute;
+    top:0;
+    left:0;
+}
+
+.text{
+
+    position:absolute;
+    width:100%;
+    top:45%;
+    text-align:center;
+
+    font-size:70px;
+    font-weight:bold;
+
+    color:#ff4da6;
+
+    text-shadow:
+    0 0 10px #ff4da6,
+    0 0 20px #ff4da6,
+    0 0 40px #ff1a75,
+    0 0 80px #ff0066;
+
+    animation: glow 2s infinite alternate;
+}
+
+.tip{
+    position:absolute;
+    width:100%;
+    bottom:80px;
+    text-align:center;
+    color:white;
+    font-size:24px;
+    opacity:0.8;
+}
+
+@keyframes glow{
+
+    from{
+        transform:scale(1);
+    }
+
+    to{
+        transform:scale(1.08);
+    }
+}
+
+</style>
+</head>
+
+<body>
+
+<canvas id="c"></canvas>
+
+<div class="text">
+    曹亚苓不要熬夜
+</div>
+
+<div class="tip">
+    ✨ 晚安比熬夜更浪漫 ✨
+</div>
+
+<script>
+
+const canvas = document.getElementById("c");
+const ctx = canvas.getContext("2d");
+
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+let particles = [];
+
+function heart(t){
+
+    let x = 16 * Math.pow(Math.sin(t),3);
+    let y = 13*Math.cos(t)
+            -5*Math.cos(2*t)
+            -2*Math.cos(3*t)
+            -Math.cos(4*t);
+
+    return {
+        x:x,
+        y:y
+    };
+}
+
+class Particle{
+
+    constructor(){
+
+        let t = Math.random()*Math.PI*2;
+
+        let h = heart(t);
+
+        this.x = canvas.width/2 + h.x*25;
+        this.y = canvas.height/2 - h.y*25;
+
+        this.size = Math.random()*4+1;
+
+        this.alpha = Math.random();
+
+        this.color = `hsla(${Math.random()*30+330},100%,70%,${this.alpha})`;
+
+        this.offset = Math.random()*100;
+    }
+
+    draw(time){
+
+        let scale = 1 + Math.sin(time*0.002 + this.offset)*0.1;
+
+        ctx.beginPath();
+
+        ctx.arc(
+            canvas.width/2 + (this.x-canvas.width/2)*scale,
+            canvas.height/2 + (this.y-canvas.height/2)*scale,
+            this.size,
+            0,
+            Math.PI*2
+        );
+
+        ctx.fillStyle = this.color;
+        ctx.fill();
+    }
+}
+
+for(let i=0;i<3000;i++){
+    particles.push(new Particle());
+}
+
+function stars(){
+
+    for(let i=0;i<80;i++){
+
+        ctx.beginPath();
+
+        let x = Math.random()*canvas.width;
+        let y = Math.random()*canvas.height;
+
+        let r = Math.random()*2;
+
+        ctx.arc(x,y,r,0,Math.PI*2);
+
+        ctx.fillStyle="white";
+        ctx.fill();
+    }
+}
+
+function animate(time){
+
+    ctx.fillStyle="rgba(0,0,0,0.15)";
+    ctx.fillRect(0,0,canvas.width,canvas.height);
+
+    stars();
+
+    particles.forEach(p=>{
+        p.draw(time);
+    });
+
+    requestAnimationFrame(animate);
+}
+
+animate();
+
+</script>
+
+</body>
+</html>
