@@ -1,10 +1,11 @@
+```html
 <!DOCTYPE html>
 <html lang="zh">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0,user-scalable=no" />
+<meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no" />
 
-<title>杨艺涵 · 星空晚安</title>
+<title>杨艺涵 · 银河音乐宇宙</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;700;900&display=swap" rel="stylesheet">
 
@@ -24,58 +25,56 @@ html,body{
     font-family:"Noto Sans SC",sans-serif;
 }
 
-body{
-    position:relative;
-}
-
-/* 星空背景 */
-
 #bg{
     position:fixed;
-    left:0;
-    top:0;
+    inset:0;
     width:100%;
     height:100%;
     z-index:1;
 }
 
-/* 光晕 */
+/* 银河背景 */
 
-.glow{
-    position:absolute;
+.galaxy{
+    position:fixed;
+    width:900px;
+    height:900px;
     border-radius:50%;
-    filter:blur(120px);
-    opacity:0.5;
-    animation:moveGlow 10s infinite alternate;
+    filter:blur(140px);
+    opacity:.32;
+    z-index:2;
+    animation:float 10s ease-in-out infinite;
 }
 
-.glow1{
-    width:400px;
-    height:400px;
-    background:#ff4fd8;
-    left:-100px;
-    top:-100px;
+.g1{
+    background:#6d5cff;
+    left:-250px;
+    top:-250px;
 }
 
-.glow2{
-    width:500px;
-    height:500px;
-    background:#6a5cff;
-    right:-150px;
-    bottom:-150px;
-    animation-delay:3s;
+.g2{
+    background:#00d0ff;
+    right:-250px;
+    bottom:-250px;
+    animation-delay:4s;
 }
 
-@keyframes moveGlow{
-    from{
-        transform:translateY(0px);
+@keyframes float{
+
+    0%{
+        transform:translateY(0px) scale(1);
     }
-    to{
-        transform:translateY(80px);
+
+    50%{
+        transform:translateY(40px) scale(1.1);
+    }
+
+    100%{
+        transform:translateY(0px) scale(1);
     }
 }
 
-/* 主内容 */
+/* 页面主体 */
 
 .main{
     position:relative;
@@ -93,199 +92,264 @@ body{
 /* 标题 */
 
 .title{
-    font-size:72px;
+    font-size:92px;
     font-weight:900;
     color:white;
-    letter-spacing:8px;
+    letter-spacing:10px;
+
     text-shadow:
-    0 0 20px rgba(255,255,255,0.5),
-    0 0 40px rgba(255,0,150,0.5);
-    animation:float 3s ease-in-out infinite;
+    0 0 20px rgba(255,255,255,.9),
+    0 0 50px rgba(109,92,255,.9),
+    0 0 100px rgba(0,208,255,.8);
+
+    animation:titleFloat 5s ease-in-out infinite;
 }
 
-@keyframes float{
+@keyframes titleFloat{
+
     0%{
         transform:translateY(0px);
     }
+
     50%{
-        transform:translateY(-10px);
+        transform:translateY(-12px);
     }
+
     100%{
         transform:translateY(0px);
     }
 }
 
-/* 副标题 */
-
-.desc{
-    margin-top:20px;
-    font-size:22px;
-    color:rgba(255,255,255,0.8);
-    letter-spacing:4px;
+.sub{
+    margin-top:18px;
+    color:rgba(255,255,255,.78);
+    letter-spacing:6px;
+    font-size:18px;
 }
 
-/* 爱心按钮 */
+/* 卡片 */
 
-.heart-btn{
-    margin-top:60px;
-    width:160px;
-    height:160px;
-    border-radius:50%;
-    background:rgba(255,255,255,0.08);
-    backdrop-filter:blur(15px);
-    border:1px solid rgba(255,255,255,0.2);
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    cursor:pointer;
-    transition:0.4s;
-    animation:heartBeat 1.5s infinite;
+.card{
+    margin-top:45px;
+    width:420px;
+    padding:35px;
+    border-radius:32px;
+
+    background:rgba(255,255,255,.08);
+
+    backdrop-filter:blur(20px);
+
+    border:1px solid rgba(255,255,255,.12);
+
     box-shadow:
-    0 0 30px rgba(255,0,120,0.3);
+    0 0 40px rgba(255,255,255,.05),
+    0 0 90px rgba(109,92,255,.18);
 }
 
-.heart-btn:hover{
-    transform:scale(1.08);
-}
-
-@keyframes heartBeat{
-    0%{
-        transform:scale(1);
-    }
-    50%{
-        transform:scale(1.08);
-    }
-    100%{
-        transform:scale(1);
-    }
-}
-
-.heart{
-    font-size:90px;
-    color:#ff4da6;
+.card-text{
+    color:white;
+    line-height:2;
+    font-size:18px;
 }
 
 /* 按钮 */
 
 .btns{
-    margin-top:40px;
+    margin-top:28px;
     display:flex;
-    gap:20px;
-    flex-wrap:wrap;
+    gap:15px;
     justify-content:center;
+    flex-wrap:wrap;
 }
 
 .btn{
-    padding:14px 36px;
+
+    border:none;
+
+    padding:14px 30px;
+
     border-radius:999px;
-    background:rgba(255,255,255,0.08);
+
     color:white;
-    border:1px solid rgba(255,255,255,0.2);
+
     cursor:pointer;
-    transition:0.4s;
-    backdrop-filter:blur(10px);
+
+    font-size:15px;
+
+    transition:.4s;
+
+    background:
+    linear-gradient(135deg,#6d5cff,#00d0ff);
+
+    box-shadow:
+    0 0 30px rgba(109,92,255,.45);
 }
 
 .btn:hover{
-    transform:translateY(-5px);
-    background:rgba(255,255,255,0.15);
+
+    transform:
+    translateY(-5px)
+    scale(1.05);
+
+    box-shadow:
+    0 0 50px rgba(0,208,255,.7);
 }
 
 /* 音乐按钮 */
 
 .music-btn{
+
     position:fixed;
+
     right:30px;
     top:30px;
-    width:65px;
-    height:65px;
+
+    width:70px;
+    height:70px;
+
     border-radius:50%;
-    background:rgba(255,255,255,0.08);
+
+    background:rgba(255,255,255,.08);
+
     backdrop-filter:blur(12px);
+
+    border:1px solid rgba(255,255,255,.15);
+
     display:flex;
     justify-content:center;
     align-items:center;
+
     color:white;
+
     font-size:30px;
+
     cursor:pointer;
+
     z-index:9999;
-    animation:rotate 5s linear infinite;
-    border:1px solid rgba(255,255,255,0.2);
+
+    animation:rotate 6s linear infinite;
 }
 
 @keyframes rotate{
+
     from{
         transform:rotate(0deg);
     }
+
     to{
         transform:rotate(360deg);
     }
 }
 
-/* 弹窗 */
+/* 频谱区域 */
 
-.message{
+.visualizer{
     position:fixed;
     left:50%;
-    top:50%;
-    transform:translate(-50%,-50%) scale(0);
-    width:320px;
-    padding:40px;
-    border-radius:30px;
-    background:rgba(255,255,255,0.08);
-    backdrop-filter:blur(20px);
-    color:white;
-    z-index:99999;
-    transition:0.5s;
-    border:1px solid rgba(255,255,255,0.15);
+    bottom:100px;
+    transform:translateX(-50%);
+
+    width:80%;
+    height:140px;
+
+    display:flex;
+    align-items:flex-end;
+    justify-content:center;
+
+    gap:4px;
+
+    z-index:20;
 }
 
-.message.show{
-    transform:translate(-50%,-50%) scale(1);
-}
+.bar{
 
-.message h2{
-    margin-bottom:20px;
-    font-size:34px;
-}
+    width:10px;
 
-.message p{
-    line-height:1.8;
-    color:rgba(255,255,255,0.85);
-}
-
-.close{
-    margin-top:25px;
-    padding:12px 30px;
-    border:none;
     border-radius:999px;
-    background:#ff4da6;
-    color:white;
-    cursor:pointer;
+
+    background:
+    linear-gradient(to top,#6d5cff,#00d0ff,#ffffff);
+
+    box-shadow:
+    0 0 20px rgba(0,208,255,.8);
+
+    transition:.08s;
 }
 
-/* 手机适配 */
+/* 鼠标拖尾 */
+
+.trail{
+    position:fixed;
+    width:8px;
+    height:8px;
+    border-radius:50%;
+    pointer-events:none;
+    z-index:9999;
+
+    background:white;
+
+    box-shadow:
+    0 0 12px white,
+    0 0 24px #6d5cff,
+    0 0 50px #00d0ff;
+
+    animation:trailFade .8s linear forwards;
+}
+
+@keyframes trailFade{
+
+    to{
+        transform:scale(0);
+        opacity:0;
+    }
+}
+
+/* 页面转场 */
+
+.transition{
+    position:fixed;
+    inset:0;
+    background:black;
+    z-index:999999;
+    animation:fadeOut 2.2s forwards;
+}
+
+@keyframes fadeOut{
+
+    to{
+        opacity:0;
+        pointer-events:none;
+    }
+}
+
+/* 手机 */
 
 @media(max-width:768px){
 
     .title{
-        font-size:42px;
-        letter-spacing:3px;
+        font-size:48px;
+        letter-spacing:4px;
     }
 
-    .desc{
-        font-size:16px;
+    .sub{
+        font-size:14px;
+        letter-spacing:2px;
     }
 
-    .heart-btn{
-        width:120px;
-        height:120px;
+    .card{
+        width:92%;
+        padding:24px;
     }
 
-    .heart{
-        font-size:60px;
+    .visualizer{
+        width:95%;
+        gap:2px;
+        height:110px;
     }
 
+    .bar{
+        width:5px;
+    }
 }
 
 </style>
@@ -293,309 +357,451 @@ body{
 
 <body>
 
+<div class="transition"></div>
+
 <!-- 音乐 -->
-<audio id="bgm" autoplay loop>
+<audio id="bgm" loop>
     <source src="suisuinian.mp3" type="audio/mpeg">
 </audio>
 
 <!-- 星空 -->
 <canvas id="bg"></canvas>
 
-<!-- 光晕 -->
-<div class="glow glow1"></div>
-<div class="glow glow2"></div>
+<!-- 银河 -->
+<div class="galaxy g1"></div>
+<div class="galaxy g2"></div>
 
 <!-- 音乐按钮 -->
 <div class="music-btn" onclick="toggleMusic()">
 🎵
 </div>
 
-<!-- 主内容 -->
+<!-- 主体 -->
 <div class="main">
 
     <div class="title">
         杨艺涵
     </div>
 
-    <div class="desc">
-        “今晚的星星，也在偷偷想你。”
+    <div class="sub">
+        银河会记住每一次心动
     </div>
 
-    <div class="heart-btn" onclick="showMessage()">
-        <div class="heart">❤</div>
-    </div>
+    <div class="card">
 
-    <div class="btns">
-
-        <div class="btn" onclick="createHearts()">
-            浪漫模式
+        <div class="card-text" id="text">
+            “如果思念有声音，<br>
+            那一定像今晚的星空一样温柔。”
         </div>
 
-        <div class="btn" onclick="changeText()">
-            想你一下
-        </div>
+        <div class="btns">
 
-        <div class="btn" onclick="fireworks()">
-            烟花
+            <button class="btn" onclick="changeText()">
+                换一句
+            </button>
+
+            <button class="btn" onclick="flashScreen()">
+                电影模式
+            </button>
+
+            <button class="btn" onclick="loveText()">
+                点一下
+            </button>
+
         </div>
 
     </div>
 
 </div>
 
-<!-- 弹窗 -->
-
-<div class="message" id="message">
-
-    <h2>杨艺涵</h2>
-
-    <p>
-        希望你每天都开心。<br>
-        像今晚的星空一样闪耀。
-    </p>
-
-    <button class="close" onclick="closeMessage()">
-        知道啦
-    </button>
-
-</div>
+<!-- 音乐频谱 -->
+<div class="visualizer" id="visualizer"></div>
 
 <script>
 
 /* 自动播放 */
 
-document.body.addEventListener('click', function () {
-    const music = document.getElementById('bgm');
+const music = document.getElementById("bgm");
+
+window.addEventListener("click",()=>{
+
     music.play();
-});
+
+    initAudio();
+
+},{once:true});
 
 /* 音乐控制 */
 
 function toggleMusic(){
 
-    const music = document.getElementById('bgm');
-
     if(music.paused){
-        music.play();
-    }else{
-        music.pause();
-    }
 
+        music.play();
+
+    }else{
+
+        music.pause();
+
+    }
 }
 
-/* 星空 */
+/* 星空粒子文字 */
 
-const canvas = document.getElementById('bg');
-const ctx = canvas.getContext('2d');
+const canvas = document.getElementById("bg");
+const ctx = canvas.getContext("2d");
 
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
-let stars = [];
+let particles = [];
 
-for(let i=0;i<250;i++){
+const mouse = {
+    x:null,
+    y:null,
+    radius:120
+};
 
-    stars.push({
-        x:Math.random()*canvas.width,
-        y:Math.random()*canvas.height,
-        r:Math.random()*2,
-        d:Math.random()*1
-    });
+window.addEventListener("mousemove",(e)=>{
 
-}
+    mouse.x = e.x;
+    mouse.y = e.y;
 
-function drawStars(){
+    createTrail(e.x,e.y);
 
-    ctx.clearRect(0,0,canvas.width,canvas.height);
+});
 
-    ctx.fillStyle="white";
+class Particle{
 
-    for(let i=0;i<stars.length;i++){
+    constructor(x,y){
 
-        let s = stars[i];
+        this.x = Math.random()*canvas.width;
+        this.y = Math.random()*canvas.height;
+
+        this.originX = x;
+        this.originY = y;
+
+        this.size = 2;
+
+        this.vx = 0;
+        this.vy = 0;
+    }
+
+    draw(){
+
+        ctx.fillStyle = "white";
 
         ctx.beginPath();
-        ctx.arc(s.x,s.y,s.r,0,Math.PI*2);
-        ctx.fill();
 
+        ctx.arc(this.x,this.y,this.size,0,Math.PI*2);
+
+        ctx.fill();
     }
 
-    moveStars();
+    update(){
 
-}
+        let dx = mouse.x - this.x;
+        let dy = mouse.y - this.y;
 
-function moveStars(){
+        let distance = Math.sqrt(dx*dx + dy*dy);
 
-    for(let i=0;i<stars.length;i++){
+        if(distance < mouse.radius){
 
-        let s = stars[i];
+            let force =
+            (mouse.radius-distance)/mouse.radius;
 
-        s.y += s.d;
+            let angle = Math.atan2(dy,dx);
 
-        if(s.y > canvas.height){
-
-            s.y = 0;
-            s.x = Math.random()*canvas.width;
-
+            this.vx -= Math.cos(angle)*force*2;
+            this.vy -= Math.sin(angle)*force*2;
         }
 
+        this.x +=
+        (this.originX-this.x)*0.05 + this.vx;
+
+        this.y +=
+        (this.originY-this.y)*0.05 + this.vy;
+
+        this.vx *= 0.92;
+        this.vy *= 0.92;
+
+        this.draw();
     }
-
 }
 
-setInterval(drawStars,33);
+function initText(){
 
-/* 弹窗 */
+    particles = [];
 
-function showMessage(){
+    ctx.clearRect(
+        0,
+        0,
+        canvas.width,
+        canvas.height
+    );
 
-    document.getElementById('message').classList.add('show');
+    ctx.fillStyle = "white";
 
-}
+    ctx.font = "bold 150px sans-serif";
 
-function closeMessage(){
+    ctx.textAlign = "center";
 
-    document.getElementById('message').classList.remove('show');
+    ctx.fillText(
+        "杨艺涵",
+        canvas.width/2,
+        canvas.height/2
+    );
 
-}
+    const data = ctx.getImageData(
+        0,
+        0,
+        canvas.width,
+        canvas.height
+    );
 
-/* 爱心粒子 */
+    for(let y=0;y<data.height;y+=4){
 
-function createHearts(){
+        for(let x=0;x<data.width;x+=4){
 
-    for(let i=0;i<20;i++){
+            const index =
+            (y*4*data.width)+(x*4);
 
-        let heart = document.createElement('div');
+            if(data.data[index+3] > 128){
 
-        heart.innerHTML = '❤';
-
-        heart.style.position='fixed';
-        heart.style.left=Math.random()*window.innerWidth+'px';
-        heart.style.top=window.innerHeight+'px';
-        heart.style.color='#ff4da6';
-        heart.style.fontSize=Math.random()*30+20+'px';
-        heart.style.zIndex='99999';
-        heart.style.pointerEvents='none';
-        heart.style.transition='3s';
-
-        document.body.appendChild(heart);
-
-        setTimeout(()=>{
-
-            heart.style.top='-100px';
-            heart.style.opacity='0';
-
-        },100);
-
-        setTimeout(()=>{
-
-            heart.remove();
-
-        },3000);
-
-    }
-
-}
-
-/* 文字切换 */
-
-function changeText(){
-
-    const texts = [
-        "今天也要开心。",
-        "杨艺涵是今晚最亮的星。",
-        "希望你永远被温柔对待。",
-        "晚风会替我想你。",
-        "碎碎念也会变成浪漫。"
-    ];
-
-    document.querySelector('.desc').innerHTML =
-    texts[Math.floor(Math.random()*texts.length)];
-
-}
-
-/* 烟花 */
-
-function fireworks(){
-
-    for(let i=0;i<80;i++){
-
-        let dot = document.createElement('div');
-
-        dot.style.position='fixed';
-        dot.style.left=window.innerWidth/2+'px';
-        dot.style.top=window.innerHeight/2+'px';
-        dot.style.width='6px';
-        dot.style.height='6px';
-        dot.style.borderRadius='50%';
-        dot.style.background='white';
-        dot.style.zIndex='99999';
-        dot.style.pointerEvents='none';
-
-        document.body.appendChild(dot);
-
-        let x = (Math.random()-0.5)*800;
-        let y = (Math.random()-0.5)*800;
-
-        dot.animate([
-            {
-                transform:'translate(0,0)',
-                opacity:1
-            },
-            {
-                transform:`translate(${x}px,${y}px)`,
-                opacity:0
+                particles.push(
+                    new Particle(x,y)
+                );
             }
-        ],{
-            duration:1500
-        });
-
-        setTimeout(()=>{
-            dot.remove();
-        },1500);
-
+        }
     }
-
 }
 
-/* 鼠标粒子 */
+function animate(){
 
-document.addEventListener('mousemove',function(e){
+    ctx.clearRect(
+        0,
+        0,
+        canvas.width,
+        canvas.height
+    );
 
-    let dot = document.createElement('div');
+    for(let p of particles){
 
-    dot.style.position='fixed';
-    dot.style.left=e.clientX+'px';
-    dot.style.top=e.clientY+'px';
-    dot.style.width='5px';
-    dot.style.height='5px';
-    dot.style.borderRadius='50%';
-    dot.style.background='white';
-    dot.style.pointerEvents='none';
-    dot.style.zIndex='99999';
+        p.update();
+    }
+
+    requestAnimationFrame(animate);
+}
+
+initText();
+animate();
+
+/* 鼠标拖尾 */
+
+function createTrail(x,y){
+
+    const dot = document.createElement("div");
+
+    dot.className = "trail";
+
+    dot.style.left = x+"px";
+    dot.style.top = y+"px";
 
     document.body.appendChild(dot);
 
-    dot.animate([
-        {
-            opacity:1,
-            transform:'scale(1)'
-        },
-        {
-            opacity:0,
-            transform:'scale(4)'
-        }
+    setTimeout(()=>{
+
+        dot.remove();
+
+    },800);
+}
+
+/* 文案 */
+
+const texts = [
+
+    "你比银河更耀眼",
+
+    "碎碎念也会变成浪漫",
+
+    "今晚的风也会想你",
+
+    "星空会记住每一次心动",
+
+    "杨艺涵永远开心"
+
+];
+
+let index = 0;
+
+function changeText(){
+
+    index++;
+
+    if(index>=texts.length){
+        index=0;
+    }
+
+    document.getElementById("text")
+    .innerHTML = texts[index];
+}
+
+/* 电影闪屏 */
+
+function flashScreen(){
+
+    const flash = document.createElement("div");
+
+    flash.style.position = "fixed";
+    flash.style.inset = "0";
+    flash.style.background = "white";
+    flash.style.zIndex = "999999";
+
+    document.body.appendChild(flash);
+
+    flash.animate([
+
+        {opacity:0},
+        {opacity:1},
+        {opacity:0}
+
     ],{
-        duration:800
+
+        duration:900
+
     });
 
     setTimeout(()=>{
-        dot.remove();
-    },800);
 
-});
+        flash.remove();
+
+    },900);
+}
+
+/* 爱心文字 */
+
+function loveText(){
+
+    const msg = document.createElement("div");
+
+    msg.innerHTML = "✨ 杨艺涵 ✨";
+
+    msg.style.position = "fixed";
+
+    msg.style.left = "50%";
+    msg.style.top = "50%";
+
+    msg.style.transform = "translate(-50%,-50%)";
+
+    msg.style.color = "white";
+
+    msg.style.fontSize = "40px";
+
+    msg.style.fontWeight = "900";
+
+    msg.style.zIndex = "999999";
+
+    msg.style.textShadow =
+    "0 0 20px white,0 0 60px #6d5cff";
+
+    document.body.appendChild(msg);
+
+    msg.animate([
+
+        {
+            opacity:0,
+            transform:"translate(-50%,-50%) scale(.5)"
+        },
+
+        {
+            opacity:1,
+            transform:"translate(-50%,-50%) scale(1)"
+        },
+
+        {
+            opacity:0,
+            transform:"translate(-50%,-180%) scale(1.6)"
+        }
+
+    ],{
+
+        duration:2000
+
+    });
+
+    setTimeout(()=>{
+
+        msg.remove();
+
+    },2000);
+}
+
+/* 音乐频谱 */
+
+const visualizer = document.getElementById("visualizer");
+
+const bars = [];
+
+for(let i=0;i<64;i++){
+
+    const bar = document.createElement("div");
+
+    bar.className = "bar";
+
+    bar.style.height = "20px";
+
+    visualizer.appendChild(bar);
+
+    bars.push(bar);
+}
+
+let analyser;
+let dataArray;
+
+function initAudio(){
+
+    if(analyser) return;
+
+    const audioContext =
+    new(window.AudioContext || window.webkitAudioContext)();
+
+    analyser = audioContext.createAnalyser();
+
+    const source =
+    audioContext.createMediaElementSource(music);
+
+    source.connect(analyser);
+
+    analyser.connect(audioContext.destination);
+
+    analyser.fftSize = 128;
+
+    const bufferLength = analyser.frequencyBinCount;
+
+    dataArray = new Uint8Array(bufferLength);
+
+    animateBars();
+}
+
+function animateBars(){
+
+    requestAnimationFrame(animateBars);
+
+    analyser.getByteFrequencyData(dataArray);
+
+    for(let i=0;i<bars.length;i++){
+
+        let value = dataArray[i];
+
+        let height = value*0.6;
+
+        bars[i].style.height =
+        Math.max(10,height)+"px";
+    }
+}
 
 </script>
 
 </body>
 </html>
+```
