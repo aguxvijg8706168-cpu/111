@@ -1,0 +1,525 @@
+```html
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no" />
+<title>杨艺涵 · 星空晚安</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;700;900&display=swap" rel="stylesheet">
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+html,body{
+    width:100%;
+    height:100%;
+    overflow:hidden;
+    font-family:"Noto Sans SC",sans-serif;
+    background:#000;
+}
+
+body{
+    position:relative;
+}
+
+/* 星空背景 */
+#bg{
+    position:fixed;
+    inset:0;
+    width:100%;
+    height:100%;
+    z-index:1;
+}
+
+/* 流光层 */
+.glow{
+    position:absolute;
+    width:60vw;
+    height:60vw;
+    border-radius:50%;
+    filter:blur(120px);
+    opacity:.35;
+    animation:float 8s ease-in-out infinite alternate;
+}
+
+.glow1{
+    background:#ff4fd8;
+    top:-10%;
+    left:-10%;
+}
+
+.glow2{
+    background:#7a5cff;
+    bottom:-15%;
+    right:-10%;
+    animation-delay:2s;
+}
+
+@keyframes float{
+    from{
+        transform:translateY(0px) translateX(0px);
+    }
+    to{
+        transform:translateY(40px) translateX(30px);
+    }
+}
+
+/* 主容器 */
+.main{
+    position:relative;
+    z-index:10;
+    width:100%;
+    height:100%;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    padding:20px;
+}
+
+/* 爱心 */
+.heart-wrap{
+    position:relative;
+    width:280px;
+    height:250px;
+    margin-bottom:30px;
+    cursor:pointer;
+    transition:.4s;
+}
+
+.heart-wrap:hover{
+    transform:scale(1.05);
+}
+
+.heart{
+    position:absolute;
+    width:100%;
+    height:100%;
+    filter:
+    drop-shadow(0 0 20px #ff4fd8)
+    drop-shadow(0 0 50px #ff4fd8);
+}
+
+/* 主标题 */
+.title{
+    text-align:center;
+    line-height:1.2;
+    animation:titleFloat 3s ease-in-out infinite alternate;
+}
+
+.title h1{
+    font-size:clamp(42px,8vw,78px);
+    font-weight:900;
+    letter-spacing:4px;
+    background:linear-gradient(90deg,#ff4fd8,#ff9ae8,#ffffff,#ff4fd8);
+    background-size:300% 300%;
+    -webkit-background-clip:text;
+    -webkit-text-fill-color:transparent;
+    animation:shine 5s linear infinite;
+    text-shadow:0 0 25px rgba(255,79,216,.6);
+}
+
+.title h2{
+    margin-top:14px;
+    font-size:clamp(18px,4vw,30px);
+    color:#fff;
+    opacity:.92;
+    font-weight:300;
+    letter-spacing:5px;
+}
+
+/* 底部提示 */
+.tip{
+    position:absolute;
+    bottom:55px;
+    text-align:center;
+    color:#fff;
+    font-size:15px;
+    opacity:.75;
+    letter-spacing:2px;
+    animation:blink 2s infinite;
+}
+
+@keyframes blink{
+    0%,100%{opacity:.3;}
+    50%{opacity:1;}
+}
+
+@keyframes shine{
+    0%{
+        background-position:0% 50%;
+    }
+    100%{
+        background-position:100% 50%;
+    }
+}
+
+@keyframes titleFloat{
+    from{
+        transform:translateY(0);
+    }
+    to{
+        transform:translateY(-10px);
+    }
+}
+
+/* 粒子文字 */
+.magic-text{
+    position:absolute;
+    pointer-events:none;
+    color:#fff;
+    font-size:20px;
+    font-weight:700;
+    text-shadow:
+    0 0 10px #fff,
+    0 0 20px #ff4fd8,
+    0 0 40px #ff4fd8;
+    animation:fly 2s linear forwards;
+}
+
+@keyframes fly{
+    0%{
+        transform:translateY(0) scale(.5);
+        opacity:0;
+    }
+    20%{
+        opacity:1;
+    }
+    100%{
+        transform:translateY(-180px) scale(1.5);
+        opacity:0;
+    }
+}
+
+/* 按钮区 */
+.btns{
+    margin-top:40px;
+    display:flex;
+    gap:18px;
+    flex-wrap:wrap;
+    justify-content:center;
+}
+
+.btn{
+    padding:14px 28px;
+    border:none;
+    border-radius:50px;
+    background:rgba(255,255,255,.08);
+    backdrop-filter:blur(10px);
+    color:#fff;
+    font-size:15px;
+    letter-spacing:2px;
+    cursor:pointer;
+    transition:.35s;
+    border:1px solid rgba(255,255,255,.15);
+    box-shadow:
+    0 0 20px rgba(255,79,216,.25);
+}
+
+.btn:hover{
+    transform:translateY(-4px) scale(1.05);
+    background:rgba(255,79,216,.25);
+    box-shadow:
+    0 0 25px rgba(255,79,216,.6);
+}
+
+/* 弹窗 */
+.popup{
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,.75);
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    z-index:999;
+    opacity:0;
+    pointer-events:none;
+    transition:.4s;
+}
+
+.popup.show{
+    opacity:1;
+    pointer-events:auto;
+}
+
+.card{
+    width:90%;
+    max-width:360px;
+    padding:40px 28px;
+    border-radius:28px;
+    background:rgba(255,255,255,.08);
+    backdrop-filter:blur(25px);
+    border:1px solid rgba(255,255,255,.12);
+    text-align:center;
+    color:#fff;
+    animation:cardShow .5s ease;
+}
+
+@keyframes cardShow{
+    from{
+        transform:scale(.7);
+        opacity:0;
+    }
+    to{
+        transform:scale(1);
+        opacity:1;
+    }
+}
+
+.card h3{
+    font-size:32px;
+    margin-bottom:16px;
+}
+
+.card p{
+    line-height:1.8;
+    opacity:.9;
+    font-size:16px;
+}
+
+.close{
+    margin-top:26px;
+    padding:12px 24px;
+    border:none;
+    border-radius:40px;
+    background:#ff4fd8;
+    color:#fff;
+    cursor:pointer;
+    font-size:15px;
+}
+
+@media(max-width:600px){
+
+    .heart-wrap{
+        width:220px;
+        height:200px;
+    }
+
+    .btn{
+        width:100%;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<canvas id="bg"></canvas>
+
+<div class="glow glow1"></div>
+<div class="glow glow2"></div>
+
+<div class="main">
+
+    <div class="heart-wrap" id="heartBtn">
+
+        <svg class="heart" viewBox="0 0 512 512">
+            <path fill="none"
+            stroke="#ff4fd8"
+            stroke-width="18"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="
+            M256 448
+            C256 448 64 320 64 176
+            C64 96 128 48 192 48
+            C240 48 256 80 256 80
+            C256 80 272 48 320 48
+            C384 48 448 96 448 176
+            C448 320 256 448 256 448Z
+            "/>
+        </svg>
+
+    </div>
+
+    <div class="title">
+        <h1>杨艺涵不要熬夜</h1>
+        <h2>✨ 晚安比熬夜更浪漫 ✨</h2>
+    </div>
+
+    <div class="btns">
+        <button class="btn" onclick="showLove()">点我看看</button>
+        <button class="btn" onclick="playBless()">星空祝福</button>
+    </div>
+
+    <div class="tip">
+        点击爱心会有隐藏互动 ✨
+    </div>
+
+</div>
+
+<!-- 弹窗 -->
+<div class="popup" id="popup">
+    <div class="card">
+        <h3>🌙 晚安 杨艺涵</h3>
+        <p>
+            世界会偷偷奖励<br>
+            每一个早点休息的人。<br><br>
+            愿你今晚的梦里<br>
+            有星河、有晚风、也有温柔。
+        </p>
+
+        <button class="close" onclick="closePopup()">知道啦 ✨</button>
+    </div>
+</div>
+
+<script>
+/* 星空粒子 */
+const canvas = document.getElementById("bg");
+const ctx = canvas.getContext("2d");
+
+let w,h,stars=[];
+
+function resize(){
+    w=canvas.width=window.innerWidth;
+    h=canvas.height=window.innerHeight;
+}
+resize();
+
+window.addEventListener("resize",resize);
+
+for(let i=0;i<240;i++){
+    stars.push({
+        x:Math.random()*w,
+        y:Math.random()*h,
+        r:Math.random()*2,
+        a:Math.random(),
+        s:Math.random()*0.5
+    });
+}
+
+function draw(){
+
+    ctx.clearRect(0,0,w,h);
+
+    stars.forEach(star=>{
+
+        star.y += star.s;
+
+        if(star.y > h){
+            star.y = 0;
+            star.x = Math.random()*w;
+        }
+
+        ctx.beginPath();
+        ctx.arc(star.x,star.y,star.r,0,Math.PI*2);
+        ctx.fillStyle=`rgba(255,255,255,${star.a})`;
+        ctx.fill();
+
+    });
+
+    requestAnimationFrame(draw);
+}
+
+draw();
+
+/* 点击爱心 */
+const heartBtn=document.getElementById("heartBtn");
+
+heartBtn.addEventListener("click",(e)=>{
+
+    createWords(e.clientX,e.clientY);
+
+    heartBtn.animate([
+        {transform:"scale(1)"},
+        {transform:"scale(1.15)"},
+        {transform:"scale(1)"}
+    ],{
+        duration:600
+    });
+
+});
+
+function createWords(x,y){
+
+    const arr=[
+        "早点睡 🌙",
+        "别熬夜 ✨",
+        "晚安 ❤️",
+        "杨艺涵 💖",
+        "好梦 🌌",
+        "星星陪你 ⭐"
+    ];
+
+    for(let i=0;i<8;i++){
+
+        const div=document.createElement("div");
+
+        div.className="magic-text";
+        div.innerHTML=arr[Math.floor(Math.random()*arr.length)];
+
+        div.style.left=x+(Math.random()*120-60)+"px";
+        div.style.top=y+(Math.random()*60-30)+"px";
+
+        document.body.appendChild(div);
+
+        setTimeout(()=>{
+            div.remove();
+        },2000);
+    }
+}
+
+/* 弹窗 */
+function showLove(){
+    document.getElementById("popup").classList.add("show");
+}
+
+function closePopup(){
+    document.getElementById("popup").classList.remove("show");
+}
+
+/* 星空祝福 */
+function playBless(){
+
+    const text=[
+        "今晚的月亮很温柔 🌙",
+        "杨艺涵早点休息 ✨",
+        "愿你被世界温柔以待 💫",
+        "星河会照亮你的梦 🌌"
+    ];
+
+    let i=0;
+
+    const timer=setInterval(()=>{
+
+        createCenterText(text[i]);
+
+        i++;
+
+        if(i>=text.length){
+            clearInterval(timer);
+        }
+
+    },1200);
+}
+
+function createCenterText(content){
+
+    const div=document.createElement("div");
+
+    div.className="magic-text";
+
+    div.style.left="50%";
+    div.style.top="55%";
+    div.style.transform="translateX(-50%)";
+
+    div.style.fontSize="30px";
+
+    div.innerHTML=content;
+
+    document.body.appendChild(div);
+
+    setTimeout(()=>{
+        div.remove();
+    },2500);
+}
+</script>
+
+</body>
+</html>
+```
