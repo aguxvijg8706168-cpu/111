@@ -1,14 +1,15 @@
-```html
 <!DOCTYPE html>
 <html lang="zh">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0,user-scalable=no" />
+
 <title>杨艺涵 · 星空晚安</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;700;900&display=swap" rel="stylesheet">
 
 <style>
+
 *{
     margin:0;
     padding:0;
@@ -19,8 +20,8 @@ html,body{
     width:100%;
     height:100%;
     overflow:hidden;
-    font-family:"Noto Sans SC",sans-serif;
     background:#000;
+    font-family:"Noto Sans SC",sans-serif;
 }
 
 body{
@@ -28,498 +29,573 @@ body{
 }
 
 /* 星空背景 */
+
 #bg{
     position:fixed;
-    inset:0;
+    left:0;
+    top:0;
     width:100%;
     height:100%;
     z-index:1;
 }
 
-/* 流光层 */
+/* 光晕 */
+
 .glow{
     position:absolute;
-    width:60vw;
-    height:60vw;
     border-radius:50%;
     filter:blur(120px);
-    opacity:.35;
-    animation:float 8s ease-in-out infinite alternate;
+    opacity:0.5;
+    animation:moveGlow 10s infinite alternate;
 }
 
 .glow1{
+    width:400px;
+    height:400px;
     background:#ff4fd8;
-    top:-10%;
-    left:-10%;
+    left:-100px;
+    top:-100px;
 }
 
 .glow2{
-    background:#7a5cff;
-    bottom:-15%;
-    right:-10%;
-    animation-delay:2s;
+    width:500px;
+    height:500px;
+    background:#6a5cff;
+    right:-150px;
+    bottom:-150px;
+    animation-delay:3s;
 }
 
-@keyframes float{
+@keyframes moveGlow{
     from{
-        transform:translateY(0px) translateX(0px);
+        transform:translateY(0px);
     }
     to{
-        transform:translateY(40px) translateX(30px);
+        transform:translateY(80px);
     }
 }
 
-/* 主容器 */
+/* 主内容 */
+
 .main{
     position:relative;
     z-index:10;
     width:100%;
     height:100%;
     display:flex;
-    flex-direction:column;
     justify-content:center;
     align-items:center;
+    flex-direction:column;
+    text-align:center;
     padding:20px;
 }
 
-/* 爱心 */
-.heart-wrap{
-    position:relative;
-    width:280px;
-    height:250px;
-    margin-bottom:30px;
-    cursor:pointer;
-    transition:.4s;
+/* 标题 */
+
+.title{
+    font-size:72px;
+    font-weight:900;
+    color:white;
+    letter-spacing:8px;
+    text-shadow:
+    0 0 20px rgba(255,255,255,0.5),
+    0 0 40px rgba(255,0,150,0.5);
+    animation:float 3s ease-in-out infinite;
 }
 
-.heart-wrap:hover{
-    transform:scale(1.05);
+@keyframes float{
+    0%{
+        transform:translateY(0px);
+    }
+    50%{
+        transform:translateY(-10px);
+    }
+    100%{
+        transform:translateY(0px);
+    }
+}
+
+/* 副标题 */
+
+.desc{
+    margin-top:20px;
+    font-size:22px;
+    color:rgba(255,255,255,0.8);
+    letter-spacing:4px;
+}
+
+/* 爱心按钮 */
+
+.heart-btn{
+    margin-top:60px;
+    width:160px;
+    height:160px;
+    border-radius:50%;
+    background:rgba(255,255,255,0.08);
+    backdrop-filter:blur(15px);
+    border:1px solid rgba(255,255,255,0.2);
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    cursor:pointer;
+    transition:0.4s;
+    animation:heartBeat 1.5s infinite;
+    box-shadow:
+    0 0 30px rgba(255,0,120,0.3);
+}
+
+.heart-btn:hover{
+    transform:scale(1.08);
+}
+
+@keyframes heartBeat{
+    0%{
+        transform:scale(1);
+    }
+    50%{
+        transform:scale(1.08);
+    }
+    100%{
+        transform:scale(1);
+    }
 }
 
 .heart{
-    position:absolute;
-    width:100%;
-    height:100%;
-    filter:
-    drop-shadow(0 0 20px #ff4fd8)
-    drop-shadow(0 0 50px #ff4fd8);
+    font-size:90px;
+    color:#ff4da6;
 }
 
-/* 主标题 */
-.title{
-    text-align:center;
-    line-height:1.2;
-    animation:titleFloat 3s ease-in-out infinite alternate;
-}
+/* 按钮 */
 
-.title h1{
-    font-size:clamp(42px,8vw,78px);
-    font-weight:900;
-    letter-spacing:4px;
-    background:linear-gradient(90deg,#ff4fd8,#ff9ae8,#ffffff,#ff4fd8);
-    background-size:300% 300%;
-    -webkit-background-clip:text;
-    -webkit-text-fill-color:transparent;
-    animation:shine 5s linear infinite;
-    text-shadow:0 0 25px rgba(255,79,216,.6);
-}
-
-.title h2{
-    margin-top:14px;
-    font-size:clamp(18px,4vw,30px);
-    color:#fff;
-    opacity:.92;
-    font-weight:300;
-    letter-spacing:5px;
-}
-
-/* 底部提示 */
-.tip{
-    position:absolute;
-    bottom:55px;
-    text-align:center;
-    color:#fff;
-    font-size:15px;
-    opacity:.75;
-    letter-spacing:2px;
-    animation:blink 2s infinite;
-}
-
-@keyframes blink{
-    0%,100%{opacity:.3;}
-    50%{opacity:1;}
-}
-
-@keyframes shine{
-    0%{
-        background-position:0% 50%;
-    }
-    100%{
-        background-position:100% 50%;
-    }
-}
-
-@keyframes titleFloat{
-    from{
-        transform:translateY(0);
-    }
-    to{
-        transform:translateY(-10px);
-    }
-}
-
-/* 粒子文字 */
-.magic-text{
-    position:absolute;
-    pointer-events:none;
-    color:#fff;
-    font-size:20px;
-    font-weight:700;
-    text-shadow:
-    0 0 10px #fff,
-    0 0 20px #ff4fd8,
-    0 0 40px #ff4fd8;
-    animation:fly 2s linear forwards;
-}
-
-@keyframes fly{
-    0%{
-        transform:translateY(0) scale(.5);
-        opacity:0;
-    }
-    20%{
-        opacity:1;
-    }
-    100%{
-        transform:translateY(-180px) scale(1.5);
-        opacity:0;
-    }
-}
-
-/* 按钮区 */
 .btns{
     margin-top:40px;
     display:flex;
-    gap:18px;
+    gap:20px;
     flex-wrap:wrap;
     justify-content:center;
 }
 
 .btn{
-    padding:14px 28px;
-    border:none;
-    border-radius:50px;
-    background:rgba(255,255,255,.08);
-    backdrop-filter:blur(10px);
-    color:#fff;
-    font-size:15px;
-    letter-spacing:2px;
+    padding:14px 36px;
+    border-radius:999px;
+    background:rgba(255,255,255,0.08);
+    color:white;
+    border:1px solid rgba(255,255,255,0.2);
     cursor:pointer;
-    transition:.35s;
-    border:1px solid rgba(255,255,255,.15);
-    box-shadow:
-    0 0 20px rgba(255,79,216,.25);
+    transition:0.4s;
+    backdrop-filter:blur(10px);
 }
 
 .btn:hover{
-    transform:translateY(-4px) scale(1.05);
-    background:rgba(255,79,216,.25);
-    box-shadow:
-    0 0 25px rgba(255,79,216,.6);
+    transform:translateY(-5px);
+    background:rgba(255,255,255,0.15);
 }
 
-/* 弹窗 */
-.popup{
+/* 音乐按钮 */
+
+.music-btn{
     position:fixed;
-    inset:0;
-    background:rgba(0,0,0,.75);
+    right:30px;
+    top:30px;
+    width:65px;
+    height:65px;
+    border-radius:50%;
+    background:rgba(255,255,255,0.08);
+    backdrop-filter:blur(12px);
     display:flex;
     justify-content:center;
     align-items:center;
-    z-index:999;
-    opacity:0;
-    pointer-events:none;
-    transition:.4s;
+    color:white;
+    font-size:30px;
+    cursor:pointer;
+    z-index:9999;
+    animation:rotate 5s linear infinite;
+    border:1px solid rgba(255,255,255,0.2);
 }
 
-.popup.show{
-    opacity:1;
-    pointer-events:auto;
-}
-
-.card{
-    width:90%;
-    max-width:360px;
-    padding:40px 28px;
-    border-radius:28px;
-    background:rgba(255,255,255,.08);
-    backdrop-filter:blur(25px);
-    border:1px solid rgba(255,255,255,.12);
-    text-align:center;
-    color:#fff;
-    animation:cardShow .5s ease;
-}
-
-@keyframes cardShow{
+@keyframes rotate{
     from{
-        transform:scale(.7);
-        opacity:0;
+        transform:rotate(0deg);
     }
     to{
-        transform:scale(1);
-        opacity:1;
+        transform:rotate(360deg);
     }
 }
 
-.card h3{
-    font-size:32px;
-    margin-bottom:16px;
+/* 弹窗 */
+
+.message{
+    position:fixed;
+    left:50%;
+    top:50%;
+    transform:translate(-50%,-50%) scale(0);
+    width:320px;
+    padding:40px;
+    border-radius:30px;
+    background:rgba(255,255,255,0.08);
+    backdrop-filter:blur(20px);
+    color:white;
+    z-index:99999;
+    transition:0.5s;
+    border:1px solid rgba(255,255,255,0.15);
 }
 
-.card p{
+.message.show{
+    transform:translate(-50%,-50%) scale(1);
+}
+
+.message h2{
+    margin-bottom:20px;
+    font-size:34px;
+}
+
+.message p{
     line-height:1.8;
-    opacity:.9;
-    font-size:16px;
+    color:rgba(255,255,255,0.85);
 }
 
 .close{
-    margin-top:26px;
-    padding:12px 24px;
+    margin-top:25px;
+    padding:12px 30px;
     border:none;
-    border-radius:40px;
-    background:#ff4fd8;
-    color:#fff;
+    border-radius:999px;
+    background:#ff4da6;
+    color:white;
     cursor:pointer;
-    font-size:15px;
 }
 
-@media(max-width:600px){
+/* 手机适配 */
 
-    .heart-wrap{
-        width:220px;
-        height:200px;
+@media(max-width:768px){
+
+    .title{
+        font-size:42px;
+        letter-spacing:3px;
     }
 
-    .btn{
-        width:100%;
+    .desc{
+        font-size:16px;
     }
+
+    .heart-btn{
+        width:120px;
+        height:120px;
+    }
+
+    .heart{
+        font-size:60px;
+    }
+
 }
+
 </style>
 </head>
 
 <body>
 
+<!-- 音乐 -->
+<audio id="bgm" autoplay loop>
+    <source src="suisuinian.mp3" type="audio/mpeg">
+</audio>
+
+<!-- 星空 -->
 <canvas id="bg"></canvas>
 
+<!-- 光晕 -->
 <div class="glow glow1"></div>
 <div class="glow glow2"></div>
 
+<!-- 音乐按钮 -->
+<div class="music-btn" onclick="toggleMusic()">
+🎵
+</div>
+
+<!-- 主内容 -->
 <div class="main">
 
-    <div class="heart-wrap" id="heartBtn">
-
-        <svg class="heart" viewBox="0 0 512 512">
-            <path fill="none"
-            stroke="#ff4fd8"
-            stroke-width="18"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            d="
-            M256 448
-            C256 448 64 320 64 176
-            C64 96 128 48 192 48
-            C240 48 256 80 256 80
-            C256 80 272 48 320 48
-            C384 48 448 96 448 176
-            C448 320 256 448 256 448Z
-            "/>
-        </svg>
-
+    <div class="title">
+        杨艺涵
     </div>
 
-    <div class="title">
-        <h1>杨艺涵不要熬夜</h1>
-        <h2>✨ 晚安比熬夜更浪漫 ✨</h2>
+    <div class="desc">
+        “今晚的星星，也在偷偷想你。”
+    </div>
+
+    <div class="heart-btn" onclick="showMessage()">
+        <div class="heart">❤</div>
     </div>
 
     <div class="btns">
-        <button class="btn" onclick="showLove()">点我看看</button>
-        <button class="btn" onclick="playBless()">星空祝福</button>
-    </div>
 
-    <div class="tip">
-        点击爱心会有隐藏互动 ✨
+        <div class="btn" onclick="createHearts()">
+            浪漫模式
+        </div>
+
+        <div class="btn" onclick="changeText()">
+            想你一下
+        </div>
+
+        <div class="btn" onclick="fireworks()">
+            烟花
+        </div>
+
     </div>
 
 </div>
 
 <!-- 弹窗 -->
-<div class="popup" id="popup">
-    <div class="card">
-        <h3>🌙 晚安 杨艺涵</h3>
-        <p>
-            世界会偷偷奖励<br>
-            每一个早点休息的人。<br><br>
-            愿你今晚的梦里<br>
-            有星河、有晚风、也有温柔。
-        </p>
 
-        <button class="close" onclick="closePopup()">知道啦 ✨</button>
-    </div>
+<div class="message" id="message">
+
+    <h2>杨艺涵</h2>
+
+    <p>
+        希望你每天都开心。<br>
+        像今晚的星空一样闪耀。
+    </p>
+
+    <button class="close" onclick="closeMessage()">
+        知道啦
+    </button>
+
 </div>
 
 <script>
-/* 星空粒子 */
-const canvas = document.getElementById("bg");
-const ctx = canvas.getContext("2d");
 
-let w,h,stars=[];
+/* 自动播放 */
 
-function resize(){
-    w=canvas.width=window.innerWidth;
-    h=canvas.height=window.innerHeight;
+document.body.addEventListener('click', function () {
+    const music = document.getElementById('bgm');
+    music.play();
+});
+
+/* 音乐控制 */
+
+function toggleMusic(){
+
+    const music = document.getElementById('bgm');
+
+    if(music.paused){
+        music.play();
+    }else{
+        music.pause();
+    }
+
 }
-resize();
 
-window.addEventListener("resize",resize);
+/* 星空 */
 
-for(let i=0;i<240;i++){
+const canvas = document.getElementById('bg');
+const ctx = canvas.getContext('2d');
+
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+let stars = [];
+
+for(let i=0;i<250;i++){
+
     stars.push({
-        x:Math.random()*w,
-        y:Math.random()*h,
+        x:Math.random()*canvas.width,
+        y:Math.random()*canvas.height,
         r:Math.random()*2,
-        a:Math.random(),
-        s:Math.random()*0.5
+        d:Math.random()*1
     });
+
 }
 
-function draw(){
+function drawStars(){
 
-    ctx.clearRect(0,0,w,h);
+    ctx.clearRect(0,0,canvas.width,canvas.height);
 
-    stars.forEach(star=>{
+    ctx.fillStyle="white";
 
-        star.y += star.s;
+    for(let i=0;i<stars.length;i++){
 
-        if(star.y > h){
-            star.y = 0;
-            star.x = Math.random()*w;
-        }
+        let s = stars[i];
 
         ctx.beginPath();
-        ctx.arc(star.x,star.y,star.r,0,Math.PI*2);
-        ctx.fillStyle=`rgba(255,255,255,${star.a})`;
+        ctx.arc(s.x,s.y,s.r,0,Math.PI*2);
         ctx.fill();
 
-    });
+    }
 
-    requestAnimationFrame(draw);
+    moveStars();
+
 }
 
-draw();
+function moveStars(){
 
-/* 点击爱心 */
-const heartBtn=document.getElementById("heartBtn");
+    for(let i=0;i<stars.length;i++){
 
-heartBtn.addEventListener("click",(e)=>{
+        let s = stars[i];
 
-    createWords(e.clientX,e.clientY);
+        s.y += s.d;
 
-    heartBtn.animate([
-        {transform:"scale(1)"},
-        {transform:"scale(1.15)"},
-        {transform:"scale(1)"}
+        if(s.y > canvas.height){
+
+            s.y = 0;
+            s.x = Math.random()*canvas.width;
+
+        }
+
+    }
+
+}
+
+setInterval(drawStars,33);
+
+/* 弹窗 */
+
+function showMessage(){
+
+    document.getElementById('message').classList.add('show');
+
+}
+
+function closeMessage(){
+
+    document.getElementById('message').classList.remove('show');
+
+}
+
+/* 爱心粒子 */
+
+function createHearts(){
+
+    for(let i=0;i<20;i++){
+
+        let heart = document.createElement('div');
+
+        heart.innerHTML = '❤';
+
+        heart.style.position='fixed';
+        heart.style.left=Math.random()*window.innerWidth+'px';
+        heart.style.top=window.innerHeight+'px';
+        heart.style.color='#ff4da6';
+        heart.style.fontSize=Math.random()*30+20+'px';
+        heart.style.zIndex='99999';
+        heart.style.pointerEvents='none';
+        heart.style.transition='3s';
+
+        document.body.appendChild(heart);
+
+        setTimeout(()=>{
+
+            heart.style.top='-100px';
+            heart.style.opacity='0';
+
+        },100);
+
+        setTimeout(()=>{
+
+            heart.remove();
+
+        },3000);
+
+    }
+
+}
+
+/* 文字切换 */
+
+function changeText(){
+
+    const texts = [
+        "今天也要开心。",
+        "杨艺涵是今晚最亮的星。",
+        "希望你永远被温柔对待。",
+        "晚风会替我想你。",
+        "碎碎念也会变成浪漫。"
+    ];
+
+    document.querySelector('.desc').innerHTML =
+    texts[Math.floor(Math.random()*texts.length)];
+
+}
+
+/* 烟花 */
+
+function fireworks(){
+
+    for(let i=0;i<80;i++){
+
+        let dot = document.createElement('div');
+
+        dot.style.position='fixed';
+        dot.style.left=window.innerWidth/2+'px';
+        dot.style.top=window.innerHeight/2+'px';
+        dot.style.width='6px';
+        dot.style.height='6px';
+        dot.style.borderRadius='50%';
+        dot.style.background='white';
+        dot.style.zIndex='99999';
+        dot.style.pointerEvents='none';
+
+        document.body.appendChild(dot);
+
+        let x = (Math.random()-0.5)*800;
+        let y = (Math.random()-0.5)*800;
+
+        dot.animate([
+            {
+                transform:'translate(0,0)',
+                opacity:1
+            },
+            {
+                transform:`translate(${x}px,${y}px)`,
+                opacity:0
+            }
+        ],{
+            duration:1500
+        });
+
+        setTimeout(()=>{
+            dot.remove();
+        },1500);
+
+    }
+
+}
+
+/* 鼠标粒子 */
+
+document.addEventListener('mousemove',function(e){
+
+    let dot = document.createElement('div');
+
+    dot.style.position='fixed';
+    dot.style.left=e.clientX+'px';
+    dot.style.top=e.clientY+'px';
+    dot.style.width='5px';
+    dot.style.height='5px';
+    dot.style.borderRadius='50%';
+    dot.style.background='white';
+    dot.style.pointerEvents='none';
+    dot.style.zIndex='99999';
+
+    document.body.appendChild(dot);
+
+    dot.animate([
+        {
+            opacity:1,
+            transform:'scale(1)'
+        },
+        {
+            opacity:0,
+            transform:'scale(4)'
+        }
     ],{
-        duration:600
+        duration:800
     });
+
+    setTimeout(()=>{
+        dot.remove();
+    },800);
 
 });
 
-function createWords(x,y){
-
-    const arr=[
-        "早点睡 🌙",
-        "别熬夜 ✨",
-        "晚安 ❤️",
-        "杨艺涵 💖",
-        "好梦 🌌",
-        "星星陪你 ⭐"
-    ];
-
-    for(let i=0;i<8;i++){
-
-        const div=document.createElement("div");
-
-        div.className="magic-text";
-        div.innerHTML=arr[Math.floor(Math.random()*arr.length)];
-
-        div.style.left=x+(Math.random()*120-60)+"px";
-        div.style.top=y+(Math.random()*60-30)+"px";
-
-        document.body.appendChild(div);
-
-        setTimeout(()=>{
-            div.remove();
-        },2000);
-    }
-}
-
-/* 弹窗 */
-function showLove(){
-    document.getElementById("popup").classList.add("show");
-}
-
-function closePopup(){
-    document.getElementById("popup").classList.remove("show");
-}
-
-/* 星空祝福 */
-function playBless(){
-
-    const text=[
-        "今晚的月亮很温柔 🌙",
-        "杨艺涵早点休息 ✨",
-        "愿你被世界温柔以待 💫",
-        "星河会照亮你的梦 🌌"
-    ];
-
-    let i=0;
-
-    const timer=setInterval(()=>{
-
-        createCenterText(text[i]);
-
-        i++;
-
-        if(i>=text.length){
-            clearInterval(timer);
-        }
-
-    },1200);
-}
-
-function createCenterText(content){
-
-    const div=document.createElement("div");
-
-    div.className="magic-text";
-
-    div.style.left="50%";
-    div.style.top="55%";
-    div.style.transform="translateX(-50%)";
-
-    div.style.fontSize="30px";
-
-    div.innerHTML=content;
-
-    document.body.appendChild(div);
-
-    setTimeout(()=>{
-        div.remove();
-    },2500);
-}
 </script>
 
 </body>
 </html>
-```
