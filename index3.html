@@ -1,9 +1,14 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="zh">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no"/>
-<title>天宇game - 赛博光剑切水果</title>
+<meta charset="UTF-8">
+<meta name="viewport"
+content="width=device-width,
+initial-scale=1,
+maximum-scale=1,
+user-scalable=no">
+
+<title>天宇game - 终极版</title>
 
 <style>
 
@@ -11,22 +16,22 @@
     margin:0;
     padding:0;
     box-sizing:border-box;
-    user-select:none;
-    -webkit-user-select:none;
     touch-action:none;
+    -webkit-user-select:none;
+    user-select:none;
 }
 
-body{
+html,body{
     overflow:hidden;
     background:#000;
     font-family:
-    "Arial",
+    Arial,
     "Microsoft YaHei",
     sans-serif;
 }
 
 /* =========================
-   主Canvas
+   canvas
 ========================= */
 
 canvas{
@@ -40,51 +45,63 @@ canvas{
 #ui{
     position:fixed;
     inset:0;
+    z-index:20;
     pointer-events:none;
-    z-index:50;
 }
 
 /* LOGO */
 
 #logo{
     position:absolute;
-    top:22px;
+    top:16px;
     left:50%;
     transform:translateX(-50%);
-    font-size:clamp(34px,5vw,82px);
+
+    font-size:clamp(28px,6vw,72px);
     font-weight:900;
-    letter-spacing:5px;
+
     color:#fff;
 
     text-shadow:
-    0 0 8px #00ffff,
-    0 0 20px #00ffff,
-    0 0 40px #00ffff,
-    0 0 80px #00ffff;
+    0 0 10px #00ffff,
+    0 0 25px #00ffff,
+    0 0 55px #00ffff;
 
-    animation:logoFloat 3s ease-in-out infinite;
+    animation:float 3s ease-in-out infinite;
 }
 
-@keyframes logoFloat{
+@keyframes float{
+
     0%{
-        transform:translateX(-50%) translateY(0px);
+        transform:
+        translateX(-50%)
+        translateY(0px);
     }
+
     50%{
-        transform:translateX(-50%) translateY(-5px);
+        transform:
+        translateX(-50%)
+        translateY(-5px);
     }
+
     100%{
-        transform:translateX(-50%) translateY(0px);
+        transform:
+        translateX(-50%)
+        translateY(0px);
     }
 }
 
-/* 得分 */
+/* score */
 
 #score{
     position:absolute;
-    top:30px;
-    left:30px;
-    font-size:42px;
-    color:#fff;
+    left:18px;
+    top:20px;
+
+    color:white;
+
+    font-size:clamp(24px,5vw,52px);
+
     font-weight:900;
 
     text-shadow:
@@ -96,128 +113,195 @@ canvas{
 
 #combo{
     position:absolute;
-    top:95px;
-    left:30px;
-    font-size:28px;
-    color:#ffdd00;
+    left:18px;
+    top:72px;
+
+    color:#ffcc00;
+
+    font-size:clamp(16px,4vw,34px);
+
     font-weight:bold;
 
     text-shadow:
-    0 0 10px #ff9900,
-    0 0 30px #ff9900;
+    0 0 10px orange,
+    0 0 25px orange;
 }
 
-/* 提示 */
+/* tip */
 
 #tip{
     position:absolute;
     top:50%;
     left:50%;
-    transform:translate(-50%,-50%);
 
-    color:#fff;
-    font-size:30px;
-    line-height:1.9;
+    transform:
+    translate(-50%,-50%);
+
     text-align:center;
+
+    color:white;
+
+    line-height:1.8;
+
+    font-size:clamp(18px,4vw,34px);
 
     text-shadow:
     0 0 10px cyan,
     0 0 30px cyan;
 
-    animation:pulse 1.8s infinite;
+    animation:pulse 1.5s infinite;
 }
 
 @keyframes pulse{
-    0%{opacity:.5;}
-    50%{opacity:1;}
-    100%{opacity:.5;}
+
+    0%{
+        opacity:.4;
+    }
+
+    50%{
+        opacity:1;
+    }
+
+    100%{
+        opacity:.4;
+    }
 }
 
-/* 摄像头 */
+/* 相机 */
 
 #cameraBox{
-    position:absolute;
-    right:18px;
-    bottom:18px;
 
-    width:260px;
-    height:190px;
+    position:absolute;
+
+    right:12px;
+    bottom:12px;
+
+    width:135px;
+    height:180px;
 
     border-radius:24px;
+
     overflow:hidden;
 
-    border:3px solid rgba(255,255,255,.35);
+    border:2px solid rgba(255,255,255,.3);
 
     box-shadow:
-    0 0 20px cyan,
-    0 0 50px rgba(0,255,255,.45);
-
-    backdrop-filter:blur(8px);
+    0 0 18px cyan,
+    0 0 45px rgba(0,255,255,.4);
 }
 
 #video,
 #handCanvas{
+
     position:absolute;
     inset:0;
+
     width:100%;
     height:100%;
+
     object-fit:cover;
 
     transform:scaleX(-1);
 }
 
-/* HUD */
+/* 开始按钮 */
 
-#hud{
+#startBtn{
+
     position:absolute;
-    bottom:225px;
-    right:22px;
 
-    color:#fff;
-    font-size:15px;
-    opacity:.75;
+    left:50%;
+    bottom:110px;
+
+    transform:translateX(-50%);
+
+    padding:16px 34px;
+
+    border:none;
+
+    border-radius:999px;
+
+    font-size:22px;
+
+    font-weight:bold;
+
+    color:white;
+
+    background:
+    linear-gradient(
+    135deg,
+    #00ffff,
+    #0066ff
+    );
+
+    box-shadow:
+    0 0 20px cyan,
+    0 0 40px rgba(0,255,255,.6);
+
+    pointer-events:auto;
+
+    animation:btnGlow 1.6s infinite;
 }
 
-/* 中间电影光 */
+@keyframes btnGlow{
 
-#cinematicGlow{
+    0%{
+        transform:
+        translateX(-50%)
+        scale(1);
+    }
+
+    50%{
+        transform:
+        translateX(-50%)
+        scale(1.06);
+    }
+
+    100%{
+        transform:
+        translateX(-50%)
+        scale(1);
+    }
+}
+
+#hint{
+    position:absolute;
+
+    bottom:70px;
+    width:100%;
+
+    text-align:center;
+
+    color:#aaa;
+
+    font-size:13px;
+}
+
+/* cinematic */
+
+#vignette{
+
     position:absolute;
     inset:0;
 
     background:
-    radial-gradient(circle at center,
-    rgba(0,255,255,.12),
-    transparent 55%);
+    radial-gradient(
+    circle at center,
+    transparent 45%,
+    rgba(0,0,0,.55)
+    );
 
-    mix-blend-mode:screen;
+    mix-blend-mode:multiply;
 }
 
-/* 手机适配 */
+/* 手机 */
 
-@media(max-width:768px){
+@media(min-width:768px){
 
     #cameraBox{
-        width:150px;
-        height:110px;
-    }
 
-    #score{
-        font-size:28px;
-    }
-
-    #combo{
-        font-size:18px;
-        top:70px;
-    }
-
-    #tip{
-        width:90%;
-        font-size:20px;
-    }
-
-    #hud{
-        bottom:135px;
-        font-size:12px;
+        width:220px;
+        height:160px;
     }
 }
 
@@ -228,41 +312,65 @@ canvas{
 
 <div id="ui">
 
-    <div id="cinematicGlow"></div>
+    <div id="vignette"></div>
 
     <div id="logo">
         ⚡ 天宇game ⚡
     </div>
 
-    <div id="score">得分 0</div>
-
-    <div id="combo">COMBO x0</div>
-
-    <div id="tip">
-        ⭐ 切开「能量星球」开始游戏<br>
-        ⚔ 用食指挥舞赛博光剑<br>
-        🔥 连击越高特效越炸裂
+    <div id="score">
+        得分 0
     </div>
 
-    <div id="hud">
-        MediaPipe + Three.js + WebAudio
+    <div id="combo">
+        COMBO x0
+    </div>
+
+    <div id="tip">
+        ⭐ 切开能量核心开始游戏<br>
+        ⚔ 挥动手指释放赛博光剑
+    </div>
+
+    <button id="startBtn">
+        开始游戏
+    </button>
+
+    <div id="hint">
+        建议开启声音体验最佳
     </div>
 
     <div id="cameraBox">
-        <video id="video" autoplay playsinline muted></video>
+
+        <video
+        id="video"
+        autoplay
+        playsinline
+        muted>
+        </video>
+
         <canvas id="handCanvas"></canvas>
+
     </div>
 
 </div>
 
-<audio id="bgm" loop>
-    <source src="dishimu.mp3" type="audio/mpeg">
+<!-- 背景音乐 -->
+<audio
+id="bgm"
+loop
+playsinline
+webkit-playsinline>
+
+<source
+src="dishimu.mp3"
+type="audio/mpeg">
+
 </audio>
 
 <script type="module">
 
 /* =========================
-   THREE.JS
+   THREE
 ========================= */
 
 import * as THREE from
@@ -280,117 +388,140 @@ from
 'https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.0';
 
 /* =========================
+   性能优化
+========================= */
+
+/*
+重点优化：
+
+1. 星星数量减少
+2. 降低像素比
+3. 减少粒子
+4. 减少geometry复杂度
+5. 手势平滑插值
+6. 降低MediaPipe负载
+*/
+
+/* =========================
    场景
 ========================= */
 
 const scene = new THREE.Scene();
 
-scene.fog = new THREE.Fog(0x000000,25,80);
-
-const camera = new THREE.PerspectiveCamera(
-    75,
-    window.innerWidth/window.innerHeight,
-    0.1,
+const camera =
+new THREE.PerspectiveCamera(
+    70,
+    innerWidth/innerHeight,
+    .1,
     1000
 );
 
 camera.position.z = 18;
 
 /* =========================
-   渲染器
+   renderer
 ========================= */
 
-const renderer = new THREE.WebGLRenderer({
-    antialias:true,
+const renderer =
+new THREE.WebGLRenderer({
+
+    antialias:false,
     alpha:true,
-    powerPreference:"high-performance"
+
+    powerPreference:
+    "high-performance"
 });
 
 renderer.setSize(
-    window.innerWidth,
-    window.innerHeight
+    innerWidth,
+    innerHeight
 );
+
+/* 手机优化 */
 
 renderer.setPixelRatio(
-    Math.min(devicePixelRatio,1.5)
+    Math.min(
+        devicePixelRatio,
+        1
+    )
 );
 
-document.body.appendChild(renderer.domElement);
+document.body.appendChild(
+    renderer.domElement
+);
 
 /* =========================
-   灯光
+   light
 ========================= */
 
-const ambient = new THREE.AmbientLight(
+scene.add(
+new THREE.AmbientLight(
     0xffffff,
-    1.3
-);
+    1.4
+));
 
-scene.add(ambient);
-
-const cyanLight = new THREE.PointLight(
+const light =
+new THREE.PointLight(
     0x00ffff,
-    8,
+    5,
     100
 );
 
-cyanLight.position.set(0,10,10);
+light.position.set(0,8,10);
 
-scene.add(cyanLight);
-
-const pinkLight = new THREE.PointLight(
-    0xff00ff,
-    6,
-    100
-);
-
-pinkLight.position.set(0,-5,15);
-
-scene.add(pinkLight);
+scene.add(light);
 
 /* =========================
-   星空
+   星空（优化版）
 ========================= */
 
-const starGeo = new THREE.BufferGeometry();
-
-const starCount = 4000;
+const starGeo =
+new THREE.BufferGeometry();
 
 const starArr = [];
 
-for(let i=0;i<starCount;i++){
+/* 从4000减少到1200 */
+
+for(let i=0;i<1200;i++){
 
     starArr.push(
-        (Math.random()-0.5)*300,
-        (Math.random()-0.5)*300,
-        (Math.random()-0.5)*300
+
+        (Math.random()-0.5)*200,
+
+        (Math.random()-0.5)*200,
+
+        (Math.random()-0.5)*200
     );
 }
 
 starGeo.setAttribute(
+
     'position',
-    new THREE.Float32BufferAttribute(starArr,3)
+
+    new THREE.Float32BufferAttribute(
+        starArr,
+        3
+    )
 );
 
-const starMat = new THREE.PointsMaterial({
-    color:0xffffff,
-    size:0.12
-});
+const stars =
+new THREE.Points(
 
-const stars = new THREE.Points(
     starGeo,
-    starMat
+
+    new THREE.PointsMaterial({
+
+        color:0xffffff,
+
+        size:.18
+    })
 );
 
 scene.add(stars);
 
 /* =========================
-   游戏变量
+   UI
 ========================= */
-
-let gameStarted = false;
-let score = 0;
-let combo = 0;
 
 const scoreEl =
 document.getElementById("score");
@@ -400,6 +531,44 @@ document.getElementById("combo");
 
 const tipEl =
 document.getElementById("tip");
+
+/* =========================
+   游戏数据
+========================= */
+
+let score = 0;
+let combo = 0;
+let gameStarted = false;
+
+/* =========================
+   音乐（手机兼容）
+========================= */
+
+const bgm =
+document.getElementById("bgm");
+
+/*
+关键修复：
+
+手机必须用户点击后
+才能播放音乐
+*/
+
+async function startAudio(){
+
+    try{
+
+        bgm.volume = .8;
+
+        await bgm.play();
+
+        console.log("音乐播放成功");
+
+    }catch(err){
+
+        console.log("音乐失败",err);
+    }
+}
 
 /* =========================
    WebAudio
@@ -417,137 +586,102 @@ function sliceSound(){
     const gain =
     audioCtx.createGain();
 
-    osc.type = "sawtooth";
-
-    osc.frequency.setValueAtTime(
-        900,
-        audioCtx.currentTime
-    );
-
-    osc.frequency.exponentialRampToValueAtTime(
-        80,
-        audioCtx.currentTime + .15
-    );
-
-    gain.gain.setValueAtTime(
-        .18,
-        audioCtx.currentTime
-    );
-
-    gain.gain.exponentialRampToValueAtTime(
-        0.0001,
-        audioCtx.currentTime + .15
-    );
-
-    osc.connect(gain);
-    gain.connect(audioCtx.destination);
-
-    osc.start();
-    osc.stop(audioCtx.currentTime + .15);
-}
-
-function boomSound(){
-
-    const osc =
-    audioCtx.createOscillator();
-
-    const gain =
-    audioCtx.createGain();
-
     osc.type = "triangle";
 
-    osc.frequency.setValueAtTime(
-        120,
-        audioCtx.currentTime
-    );
+    osc.frequency.value = 800;
 
-    gain.gain.setValueAtTime(
-        .3,
-        audioCtx.currentTime
-    );
-
-    gain.gain.exponentialRampToValueAtTime(
-        0.0001,
-        audioCtx.currentTime + .4
-    );
+    gain.gain.value = .08;
 
     osc.connect(gain);
-    gain.connect(audioCtx.destination);
+
+    gain.connect(
+        audioCtx.destination
+    );
 
     osc.start();
-    osc.stop(audioCtx.currentTime + .4);
+
+    gain.gain.exponentialRampToValueAtTime(
+
+        0.0001,
+
+        audioCtx.currentTime + .12
+    );
+
+    osc.stop(
+        audioCtx.currentTime + .12
+    );
 }
 
 /* =========================
-   能量星球
+   开始能量核心
 ========================= */
 
-let startOrb;
+let core;
 
-function createStartOrb(){
+function createCore(){
 
     const geo =
-    new THREE.IcosahedronGeometry(2.3,2);
+    new THREE.IcosahedronGeometry(
+        1.8,
+        0
+    );
 
     const mat =
     new THREE.MeshStandardMaterial({
 
         color:0x00ffff,
+
         emissive:0x00ffff,
-        emissiveIntensity:2.5,
 
-        metalness:1,
-        roughness:.1,
-
-        wireframe:false
+        emissiveIntensity:2
     });
 
-    startOrb = new THREE.Mesh(
+    core =
+    new THREE.Mesh(
         geo,
         mat
     );
 
-    scene.add(startOrb);
+    scene.add(core);
 }
 
-createStartOrb();
+createCore();
 
 /* =========================
-   Emoji水果
+   水果
 ========================= */
 
 const fruits = [];
 
 const emojis = [
     "🍉",
-    "🍓",
-    "🍊",
     "🍎",
-    "🥝",
+    "🍊",
+    "🍓",
     "🍑",
-    "🍍",
-    "🍒"
+    "🥝"
 ];
 
-function createEmojiTexture(emoji){
+function emojiTexture(emoji){
 
     const c =
     document.createElement("canvas");
 
-    c.width = 256;
-    c.height = 256;
+    c.width = 128;
+    c.height = 128;
 
-    const ctx = c.getContext("2d");
+    const ctx =
+    c.getContext("2d");
 
-    ctx.font = "180px serif";
+    ctx.font = "90px serif";
 
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
 
     ctx.fillText(
         emoji,
-        128,
-        128
+        64,
+        64
     );
 
     return new THREE.CanvasTexture(c);
@@ -558,39 +692,39 @@ function spawnFruit(){
     const emoji =
     emojis[
         Math.floor(
-            Math.random()*emojis.length
+            Math.random()*
+            emojis.length
         )
     ];
 
-    const geo =
-    new THREE.PlaneGeometry(2.8,2.8);
-
-    const mat =
-    new THREE.MeshBasicMaterial({
-        map:createEmojiTexture(emoji),
-        transparent:true
-    });
-
     const fruit =
-    new THREE.Mesh(geo,mat);
+    new THREE.Mesh(
+
+        new THREE.PlaneGeometry(
+            2.4,
+            2.4
+        ),
+
+        new THREE.MeshBasicMaterial({
+
+            map:
+            emojiTexture(emoji),
+
+            transparent:true
+        })
+    );
 
     fruit.position.x =
-    (Math.random()-0.5)*16;
+    (Math.random()-.5)*14;
 
-    fruit.position.y = -12;
-
-    fruit.position.z =
-    Math.random()*4-2;
+    fruit.position.y = -10;
 
     fruit.velocity = {
 
-        x:(Math.random()-0.5)*0.08,
+        x:(Math.random()-.5)*.05,
 
-        y:.22 + Math.random()*0.08
+        y:.18 + Math.random()*.05
     };
-
-    fruit.rotationSpeed =
-    (Math.random()-0.5)*0.12;
 
     scene.add(fruit);
 
@@ -598,132 +732,108 @@ function spawnFruit(){
 }
 
 /* =========================
-   光剑轨迹（超丝滑）
+   光剑（超优化）
 ========================= */
 
 const swordPoints = [];
 
-const maxTrail = 40;
-
-const trailGeo =
+const swordGeo =
 new THREE.BufferGeometry();
 
-const trailMat =
-new THREE.LineBasicMaterial({
-
-    color:0x00ffff,
-
-    transparent:true,
-
-    opacity:.95
-});
-
-const trail =
+const sword =
 new THREE.Line(
-    trailGeo,
-    trailMat
-);
 
-scene.add(trail);
+    swordGeo,
 
-/* 光剑发光球 */
+    new THREE.LineBasicMaterial({
 
-const saberGlow =
-new THREE.Mesh(
-
-    new THREE.SphereGeometry(.3,16,16),
-
-    new THREE.MeshBasicMaterial({
         color:0x00ffff
     })
 );
 
-scene.add(saberGlow);
+scene.add(sword);
 
 /* 平滑 */
 
-let smoothX = 0;
-let smoothY = 0;
+let sx = 0;
+let sy = 0;
 
 function updateSword(x,y){
 
-    /* 插值平滑 */
+    /* 更平滑 */
 
-    smoothX += (x-smoothX)*0.35;
-    smoothY += (y-smoothY)*0.35;
-
-    saberGlow.position.set(
-        smoothX,
-        smoothY,
-        0
-    );
+    sx += (x-sx)*0.22;
+    sy += (y-sy)*0.22;
 
     swordPoints.push(
         new THREE.Vector3(
-            smoothX,
-            smoothY,
+            sx,
+            sy,
             0
         )
     );
 
-    if(swordPoints.length > maxTrail){
+    if(swordPoints.length > 18){
 
         swordPoints.shift();
     }
 
-    trailGeo.setFromPoints(
+    swordGeo.setFromPoints(
         swordPoints
     );
 }
 
 /* =========================
-   粒子爆炸
+   粒子（大优化）
 ========================= */
 
-const particlePool = [];
+const particles = [];
 
-function explosion(x,y){
+function boom(x,y){
 
-    for(let i=0;i<35;i++){
+    /* 35减少到10 */
 
-        const geo =
-        new THREE.SphereGeometry(.06,6,6);
-
-        const mat =
-        new THREE.MeshBasicMaterial({
-
-            color:
-            Math.random()>.5
-            ?0x00ffff
-            :0xff00ff,
-
-            transparent:true
-        });
+    for(let i=0;i<10;i++){
 
         const p =
-        new THREE.Mesh(geo,mat);
+        new THREE.Mesh(
+
+            new THREE.SphereGeometry(
+                .05,
+                4,
+                4
+            ),
+
+            new THREE.MeshBasicMaterial({
+
+                color:
+                Math.random()>.5
+                ?0x00ffff
+                :0xff00ff,
+
+                transparent:true
+            })
+        );
 
         p.position.set(x,y,0);
 
         p.vel = {
 
-            x:(Math.random()-0.5)*0.45,
+            x:(Math.random()-.5)*.22,
 
-            y:(Math.random()-0.5)*0.45,
-
-            z:(Math.random()-0.5)*0.45
+            y:(Math.random()-.5)*.22
         };
 
         p.life = 1;
 
         scene.add(p);
 
-        particlePool.push(p);
+        particles.push(p);
     }
 }
 
 /* =========================
-   摄像头
+   camera
 ========================= */
 
 const video =
@@ -735,18 +845,27 @@ document.getElementById("handCanvas");
 const hctx =
 handCanvas.getContext("2d");
 
-handCanvas.width = 260;
-handCanvas.height = 190;
+handCanvas.width = 135;
+handCanvas.height = 180;
 
 async function setupCamera(){
 
     const stream =
-    await navigator.mediaDevices.getUserMedia({
+    await navigator
+    .mediaDevices
+    .getUserMedia({
 
         video:{
+
             facingMode:"user",
-            width:{ideal:640},
-            height:{ideal:480}
+
+            width:{
+                ideal:320
+            },
+
+            height:{
+                ideal:240
+            }
         },
 
         audio:false
@@ -756,29 +875,29 @@ async function setupCamera(){
 
     return new Promise(resolve=>{
 
-        video.onloadedmetadata = ()=>{
-
-            resolve(video);
-        };
+        video.onloadedmetadata =
+        ()=>resolve(video);
     });
 }
 
 /* =========================
-   MEDIAPIPE
+   mediapipe
 ========================= */
 
 let handLandmarker;
 
-async function createHandLandmarker(){
+async function setupHand(){
 
     const vision =
-    await FilesetResolver.forVisionTasks(
+    await FilesetResolver
+    .forVisionTasks(
 
         "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.0/wasm"
     );
 
     handLandmarker =
-    await HandLandmarker.createFromOptions(
+    await HandLandmarker
+    .createFromOptions(
 
         vision,
 
@@ -798,20 +917,28 @@ async function createHandLandmarker(){
 }
 
 /* =========================
-   手部识别
+   检测（核心优化）
 ========================= */
 
-let lastVideoTime = -1;
+let detectFrame = 0;
 
 async function detectHands(){
 
-    if(video.currentTime !== lastVideoTime){
+    detectFrame++;
 
-        lastVideoTime = video.currentTime;
+    /*
+    超关键优化：
 
-        const results =
+    每2帧检测一次
+    */
+
+    if(detectFrame % 2 === 0){
+
+        const result =
         handLandmarker.detectForVideo(
+
             video,
+
             performance.now()
         );
 
@@ -822,48 +949,57 @@ async function detectHands(){
             handCanvas.height
         );
 
-        if(results.landmarks.length){
+        if(result.landmarks.length){
 
             const lm =
-            results.landmarks[0];
+            result.landmarks[0];
 
             drawHand(lm);
 
-            const index = lm[8];
+            const index =
+            lm[8];
 
             const x =
-            ((1-index.x)*2-1)*12;
+            ((1-index.x)*2-1)*10;
 
             const y =
-            (-(index.y*2-1))*7;
+            (-(index.y*2-1))*6;
 
             updateSword(x,y);
 
-            checkHit(x,y);
+            hitCheck(x,y);
         }
     }
 
-    requestAnimationFrame(detectHands);
+    requestAnimationFrame(
+        detectHands
+    );
 }
 
 /* =========================
-   画手骨骼
+   手骨骼
 ========================= */
 
 function drawHand(lm){
 
-    hctx.strokeStyle = "#00ffff";
-    hctx.lineWidth = 2;
+    hctx.strokeStyle =
+    "#00ffff";
+
+    hctx.lineWidth = 1.5;
 
     const cons = [
 
-        [0,1],[1,2],[2,3],[3,4],
         [0,5],[5,6],[6,7],[7,8],
-        [5,9],[9,10],[10,11],[11,12],
-        [9,13],[13,14],[14,15],[15,16],
-        [13,17],[17,18],[18,19],[19,20],
-        [0,17]
+
+        [0,9],[9,10],[10,11],[11,12],
+
+        [0,13],[13,14],[14,15],[15,16]
     ];
+
+    /*
+    骨骼减少
+    更流畅
+    */
 
     for(const [a,b] of cons){
 
@@ -873,33 +1009,24 @@ function drawHand(lm){
         hctx.beginPath();
 
         hctx.moveTo(
-            p1.x*handCanvas.width,
-            p1.y*handCanvas.height
+
+            p1.x*
+            handCanvas.width,
+
+            p1.y*
+            handCanvas.height
         );
 
         hctx.lineTo(
-            p2.x*handCanvas.width,
-            p2.y*handCanvas.height
+
+            p2.x*
+            handCanvas.width,
+
+            p2.y*
+            handCanvas.height
         );
 
         hctx.stroke();
-    }
-
-    for(const p of lm){
-
-        hctx.beginPath();
-
-        hctx.fillStyle = "#ffffff";
-
-        hctx.arc(
-            p.x*handCanvas.width,
-            p.y*handCanvas.height,
-            4,
-            0,
-            Math.PI*2
-        );
-
-        hctx.fill();
     }
 }
 
@@ -907,37 +1034,30 @@ function drawHand(lm){
    碰撞
 ========================= */
 
-function checkHit(x,y){
+function hitCheck(x,y){
 
-    /* 开始 */
-
-    if(startOrb){
+    if(core){
 
         const d =
         Math.hypot(
-            x-startOrb.position.x,
-            y-startOrb.position.y
+
+            x-core.position.x,
+
+            y-core.position.y
         );
 
-        if(d < 2.4){
+        if(d < 2){
 
-            scene.remove(startOrb);
+            scene.remove(core);
 
-            startOrb = null;
+            core = null;
 
             gameStarted = true;
 
-            tipEl.style.display = "none";
-
-            document
-            .getElementById("bgm")
-            .play();
-
-            boomSound();
+            tipEl.style.display =
+            "none";
         }
     }
-
-    /* 水果 */
 
     for(let i=fruits.length-1;i>=0;i--){
 
@@ -945,13 +1065,15 @@ function checkHit(x,y){
 
         const d =
         Math.hypot(
+
             x-f.position.x,
+
             y-f.position.y
         );
 
-        if(d < 1.5){
+        if(d < 1.4){
 
-            explosion(
+            boom(
                 f.position.x,
                 f.position.y
             );
@@ -979,38 +1101,37 @@ function checkHit(x,y){
    动画
 ========================= */
 
-let spawnTimer = 0;
+let timer = 0;
 
 function animate(){
 
-    requestAnimationFrame(animate);
+    requestAnimationFrame(
+        animate
+    );
 
-    /* 星空 */
+    stars.rotation.y += .0003;
 
-    stars.rotation.y += .0005;
+    if(core){
 
-    /* 开始星球 */
+        core.rotation.x += .01;
 
-    if(startOrb){
+        core.rotation.y += .01;
 
-        startOrb.rotation.x += .01;
-        startOrb.rotation.y += .015;
-
-        startOrb.position.y =
-        Math.sin(Date.now()*.002)*.7;
+        core.position.y =
+        Math.sin(
+            Date.now()*.002
+        )*.4;
     }
-
-    /* 刷水果 */
 
     if(gameStarted){
 
-        spawnTimer++;
+        timer++;
 
-        if(spawnTimer > 35){
+        if(timer > 45){
 
             spawnFruit();
 
-            spawnTimer = 0;
+            timer = 0;
         }
     }
 
@@ -1020,14 +1141,15 @@ function animate(){
 
         const f = fruits[i];
 
-        f.position.x += f.velocity.x;
-        f.position.y += f.velocity.y;
+        f.position.x +=
+        f.velocity.x;
 
-        f.velocity.y -= .0045;
+        f.position.y +=
+        f.velocity.y;
 
-        f.rotation.z += f.rotationSpeed;
+        f.velocity.y -= .0038;
 
-        if(f.position.y < -15){
+        if(f.position.y < -12){
 
             scene.remove(f);
 
@@ -1042,27 +1164,33 @@ function animate(){
 
     /* 粒子 */
 
-    for(let i=particlePool.length-1;i>=0;i--){
+    for(let i=particles.length-1;i>=0;i--){
 
-        const p = particlePool[i];
+        const p = particles[i];
 
-        p.position.x += p.vel.x;
-        p.position.y += p.vel.y;
-        p.position.z += p.vel.z;
+        p.position.x +=
+        p.vel.x;
 
-        p.life -= .03;
+        p.position.y +=
+        p.vel.y;
 
-        p.material.opacity = p.life;
+        p.life -= .05;
+
+        p.material.opacity =
+        p.life;
 
         if(p.life <= 0){
 
             scene.remove(p);
 
-            particlePool.splice(i,1);
+            particles.splice(i,1);
         }
     }
 
-    renderer.render(scene,camera);
+    renderer.render(
+        scene,
+        camera
+    );
 }
 
 animate();
@@ -1071,52 +1199,59 @@ animate();
    resize
 ========================= */
 
-window.addEventListener("resize",()=>{
+addEventListener(
+"resize",
+
+()=>{
 
     camera.aspect =
-    window.innerWidth/window.innerHeight;
+    innerWidth/innerHeight;
 
     camera.updateProjectionMatrix();
 
     renderer.setSize(
-        window.innerWidth,
-        window.innerHeight
+        innerWidth,
+        innerHeight
     );
 });
 
 /* =========================
-   初始化
+   启动
 ========================= */
 
 (async()=>{
 
     await setupCamera();
 
-    await createHandLandmarker();
+    await setupHand();
 
     detectHands();
 
 })();
 
 /* =========================
-   手机音频解锁
+   开始按钮
 ========================= */
 
-window.addEventListener(
+document
+.getElementById("startBtn")
+.addEventListener(
 
-    "click",
+"click",
 
-    ()=>{
+async()=>{
 
-        audioCtx.resume();
+    /* 手机音频解锁 */
 
-        document
-        .getElementById("bgm")
-        .play();
-    },
+    await audioCtx.resume();
 
-    {once:true}
-);
+    await startAudio();
+
+    document
+    .getElementById("startBtn")
+    .style.display =
+    "none";
+});
 
 </script>
 
