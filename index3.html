@@ -3,62 +3,79 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>天宇Game - 极速战纪</title>
+    <title>天宇Game - 萌物极速切</title>
     <style>
-        :root { --neon: #00fff2; }
-        body { margin: 0; overflow: hidden; background: #000; font-family: 'Arial Black', sans-serif; }
+        :root { --neon: #ff0077; --bg: #ffffff; }
+        body { margin: 0; overflow: hidden; background: var(--bg); font-family: 'PingFang SC', sans-serif; touch-action: none; user-select: none; }
         
-        /* 性能监测及状态 UI */
+        /* 游戏主体渲染层 */
+        #game-canvas { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 1; }
+
+        /* 清晰风格 UI 层 */
         #ui-layer {
-            position: absolute; inset: 0; pointer-events: none; z-index: 100;
-            display: flex; flex-direction: column; justify-content: space-between; padding: 20px;
+            position: absolute; top: 0; left: 0; width: 100%; padding: 25px;
+            display: flex; flex-direction: column; align-items: flex-start;
+            z-index: 10; color: #333; pointer-events: none;
         }
-        .header { display: flex; justify-content: space-between; color: var(--neon); text-shadow: 0 0 10px var(--neon); }
-        .score-val { font-size: 32px; }
         
-        /* 关卡进度条 */
-        #progress-container { width: 100%; height: 6px; background: rgba(255,255,255,0.1); border-radius: 3px; margin-top: 10px; overflow: hidden; }
-        #progress-bar { width: 0%; height: 100%; background: var(--neon); transition: width 0.3s; }
+        .brand { font-size: 36px; font-weight: bold; color: var(--neon); text-shadow: 0 0 10px rgba(255,0,119,0.3); }
+        .score-box { font-size: 50px; font-weight: bold; margin-top: 5px; color: #1a1a1a; }
+        
+        /* 密度调节滑块 - 放在左上角 */
+        #controls { pointer-events: auto; margin-top: 15px; background: rgba(255,255,255,0.8); padding: 10px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+        label { font-size: 14px; color: #666; margin-right: 8px; vertical-align: middle; }
+        input[type=range] { vertical-align: middle; cursor: pointer; accent-color: var(--neon); }
+
+        /* 打击反馈数字 */
+        #sc-pop {
+            position: absolute; top: 30%; left: 50%; transform: translate(-50%, -50%) scale(0.5);
+            font-size: 80px; font-weight: 900; color: var(--neon); opacity: 0;
+            transition: 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28); z-index: 100; pointer-events: none;
+        }
 
         /* 微信/手机适配：右下角小窗 */
         #camera-box {
-            position: absolute; bottom: 20px; right: 20px; width: 120px; height: 90px;
-            border: 2px solid var(--neon); border-radius: 8px; transform: scaleX(-1); overflow: hidden;
+            position: absolute; bottom: 20px; right: 20px; width: 130px; height: 97.5px;
+            border: 3px solid var(--neon); border-radius: 12px; transform: scaleX(-1);
+            overflow: hidden; box-shadow: 0 0 20px rgba(255,0,119,0.2); z-index: 20;
         }
         video, #gesture-canvas { position: absolute; width: 100%; height: 100%; object-fit: cover; }
 
-        /* 全屏消息反馈 */
-        #msg-overlay { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; z-index: 150; pointer-events: none; }
-        .combo-text { color: #fff; font-size: 80px; font-style: italic; opacity: 0; text-shadow: 0 0 20px #ff0055; }
-
-        /* 开始面板 */
+        /* 开始/结束面板 */
         #panel {
-            position: absolute; inset: 0; background: #000; display: flex; flex-direction: column;
-            align-items: center; justify-content: center; z-index: 200; color: #fff;
+            position: absolute; inset: 0; background: var(--bg); display: flex; flex-direction: column;
+            align-items: center; justify-content: center; z-index: 200; transition: 0.5s;
         }
         .start-btn {
-            padding: 15px 60px; font-size: 24px; background: transparent; border: 3px solid var(--neon);
-            color: var(--neon); border-radius: 40px; cursor: pointer; box-shadow: 0 0 20px var(--neon);
+            padding: 18px 70px; font-size: 26px; font-weight: bold; background: var(--neon);
+            color: #fff; border: none; border-radius: 50px; cursor: pointer;
+            box-shadow: 0 5px 25px rgba(255,0,119,0.4); transition: 0.3s;
         }
+        .start-btn:hover { transform: translateY(-3px); box-shadow: 0 8px 30px rgba(255,0,119,0.6); }
+        
+        #loading-txt { margin-top: 25px; color: #888; font-size: 16px; }
     </style>
 </head>
 <body>
 
+<canvas id="game-canvas"></canvas>
+
 <div id="ui-layer">
-    <div class="header">
-        <div class="level-info">STAGE <span id="lv-txt">01</span></div>
-        <div class="score-val" id="sc-txt">0</div>
+    <div class="brand">天宇GAME</div>
+    <div class="score-box" id="sc-txt">0</div>
+    
+    <div id="controls">
+        <label for="density">萌物密度:</label>
+        <input type="range" id="density" min="1" max="100" value="50">
     </div>
-    <div id="progress-container"><div id="progress-bar"></div></div>
 </div>
 
-<div id="msg-overlay"><div id="combo-box" class="combo-text">COMBO</div></div>
+<div id="sc-pop">+100</div>
 
 <div id="panel">
-    <h1 style="font-size: 50px; color: var(--neon);">天宇GAME</h1>
-    <p style="margin-bottom: 30px; letter-spacing: 5px;">LEVEL 1 - 30 极速挑战</p>
-    <button class="start-btn" id="start-btn">进入心流模式</button>
-    <p id="loading-txt" style="margin-top: 20px; color: #555;">正在同步 AI 神经元...</p>
+    <div class="brand" style="font-size: 60px; margin-bottom: 50px;">萌 物 极 速 切</div>
+    <button class="start-btn" id="start-btn">开启萌系挑战</button>
+    <p id="loading-txt">🎮 正在同步 AI 神经元...</p>
 </div>
 
 <div id="camera-box">
@@ -66,156 +83,169 @@
     <canvas id="gesture-canvas"></canvas>
 </div>
 
-<div id="webgl-container"></div>
-
-<script type="importmap">{ "imports": { "three": "https://unpkg.com/three@0.160.0/build/three.module.js" } }</script>
-
 <script type="module">
-    import * as THREE from 'three';
     import { HandLandmarker, FilesetResolver } from "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.0";
 
-    // --- 核心配置 ---
-    let score = 0, currentLv = 1, lvScore = 0;
-    let gameActive = false, handLandmarker;
+    // --- 核心变量 ---
+    let score = 0, gameActive = false, handLandmarker;
+    let spawnFrequency = 1500; // 初始飞出频率 (ms)
     const targets = [];
-    const targetPool = []; // 对象池避免 GC
     
-    // 关卡参数配置 (速度、频率、目标分)
-    const getLvConfig = (lv) => ({
-        speed: 0.12 + (lv * 0.01),
-        freq: Math.max(400, 1500 - (lv * 40)),
-        goal: 100 + (lv * 50)
-    });
+    // --- 极速渲染引擎 (2D Canvas) ---
+    const canvas = document.getElementById('game-canvas');
+    const ctx = canvas.getContext('2d', { alpha: false }); // 优化性能
+    let W, H;
 
-    // --- 渲染引擎 (极致性能模式) ---
-    const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.1, 100);
-    const renderer = new THREE.WebGLRenderer({ antialias: false, powerPreference: "high-performance" });
-    renderer.setPixelRatio(1); // 强制 1 倍像素比，防止高刷屏卡顿
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    document.getElementById('webgl-container').appendChild(renderer.domElement);
-
-    // 动态星空背景
-    const starGeo = new THREE.BufferGeometry();
-    const starPos = new Float32Array(3000);
-    for(let i=0; i<3000; i++) starPos[i] = (Math.random()-0.5)*50;
-    starGeo.setAttribute('position', new THREE.BufferAttribute(starPos, 3));
-    const starPoints = new THREE.Points(starGeo, new THREE.PointsMaterial({ color: 0x444444, size: 0.05 }));
-    scene.add(starPoints);
-
-    camera.position.z = 8;
+    function resize() {
+        W = canvas.width = window.innerWidth;
+        H = canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resize);
+    resize();
 
     // --- 手势识别 ---
     const video = document.getElementById('v');
     const gCanvas = document.getElementById('gesture-canvas');
     const gCtx = gCanvas.getContext('2d');
-    let fingerPos = new THREE.Vector3();
+    let fingerX = -100, fingerY = -100; // 屏幕物理坐标
 
     async function initAI() {
-        const vision = await FilesetResolver.forVisionTasks("https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.0/wasm");
-        handLandmarker = await HandLandmarker.createFromOptions(vision, {
-            baseOptions: { modelAssetPath: `https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/1/hand_landmarker.task`, delegate: "GPU" },
-            runningMode: "VIDEO", numHands: 1
-        });
-        document.getElementById('loading-txt').innerText = "AI 就绪，准备触发";
-    }
-
-    // --- 玩法逻辑 ---
-    const emojis = ['🌟', '🍎', '💎', '🔥', '👾', '🍬'];
-    function spawn() {
-        if(!gameActive) return;
-        
-        let obj;
-        if(targetPool.length > 0) {
-            obj = targetPool.pop();
-            obj.visible = true;
-        } else {
-            const canvas = document.createElement('canvas');
-            canvas.width = 64; canvas.height = 64;
-            const ctx = canvas.getContext('2d');
-            ctx.font = '50px Arial'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-            ctx.fillText(emojis[Math.floor(Math.random()*emojis.length)], 32, 32);
-            const tex = new THREE.CanvasTexture(canvas);
-            obj = new THREE.Sprite(new THREE.SpriteMaterial({ map: tex }));
-            obj.scale.set(0.8, 0.8, 1);
+        try {
+            const vision = await FilesetResolver.forVisionTasks("https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.0/wasm");
+            handLandmarker = await HandLandmarker.createFromOptions(vision, {
+                baseOptions: { 
+                    modelAssetPath: `https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/1/hand_landmarker.task`,
+                    delegate: "GPU" 
+                },
+                runningMode: "VIDEO", numHands: 1
+            });
+            document.getElementById('loading-txt').innerText = "AI 就绪，随时触发";
+        } catch (e) {
+            document.getElementById('loading-txt').innerText = "AI 加载失败，请检查网速";
         }
-
-        const conf = getLvConfig(currentLv);
-        obj.position.set((Math.random()-0.5)*10, -6, 0);
-        obj.userData = { vel: new THREE.Vector3((Math.random()-0.5)*0.05, conf.speed, 0) };
-        
-        scene.add(obj);
-        targets.push(obj);
-        setTimeout(spawn, conf.freq);
     }
 
+    // --- 游戏物体管理 ---
+    const emojis = ['🐶', '🐱', '🐭', '🐹', '🐰', '🦊', '🐻', '🐼', '🐨', '🐸'];
+    
+    class Target {
+        constructor() {
+            this.emoji = emojis[Math.floor(Math.random()*emojis.length)];
+            this.x = (Math.random() * 0.8 + 0.1) * W; // 初始位置
+            this.y = H + 50;
+            this.vx = (Math.random() - 0.5) * W * 0.005; // 随机横向速度
+            this.vy = -(H * 0.02 + Math.random() * H * 0.005); // 初始向上速度
+            this.size = Math.min(W, H) * 0.15; // 响应式大小
+            this.opacity = 1;
+            this.state = 'flying'; // 飞行中, 被切开
+        }
+        
+        update() {
+            if (this.state === 'flying') {
+                this.x += this.vx;
+                this.y += this.vy;
+                this.vy += H * 0.0003; // 轻微重力
+
+                // 碰撞检测 (与指尖物理坐标)
+                const dx = this.x - fingerX;
+                const dy = this.y - fingerY;
+                if (Math.sqrt(dx*dx + dy*dy) < this.size * 0.6) {
+                    this.slice();
+                }
+            } else if (this.state === 'sliced') {
+                this.size *= 0.9; // 切开瞬间缩小
+                this.opacity -= 0.1; // 淡出
+            }
+            
+            // 是否死亡 (掉出屏幕或彻底淡出)
+            return (this.y > H + 100 && this.vy > 0) || this.opacity <= 0;
+        }
+        
+        draw() {
+            ctx.globalAlpha = this.opacity;
+            ctx.font = `${this.size}px Arial`;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            
+            // 可视化描边 (类似于截图风格)
+            ctx.strokeStyle = "rgba(255,0,119,0.3)"; 
+            ctx.lineWidth = this.size * 0.05;
+            ctx.strokeText(this.emoji, this.x, this.y);
+            
+            ctx.fillText(this.emoji, this.x, this.y);
+        }
+        
+        slice() {
+            this.state = 'sliced';
+            score += 100;
+            document.getElementById('sc-txt').innerText = score;
+            hitEffect();
+        }
+    }
+
+    function spawnLoop() {
+        if (!gameActive) return;
+        targets.push(new Target());
+        // 动态频率：根据滑块值计算下一次生成时间
+        setTimeout(spawnLoop, spawnFrequency);
+    }
+
+    //打击反馈特效
     function hitEffect() {
-        const comboEl = document.getElementById('combo-box');
-        comboEl.style.opacity = '1';
-        comboEl.style.transform = 'scale(1.2)';
-        setTimeout(() => { comboEl.style.opacity = '0'; comboEl.style.transform = 'scale(1)'; }, 200);
-        
-        // 视觉闪烁打击感
-        renderer.setClearColor(0x333333, 1);
-        setTimeout(() => renderer.setClearColor(0x000000, 1), 50);
+        const pop = document.getElementById('sc-pop');
+        pop.style.opacity = '1';
+        pop.style.transform = 'translate(-50%, -50%) scale(1.1)';
+        setTimeout(() => {
+            pop.style.opacity = '0';
+            pop.style.transform = 'translate(-50%, -50%) scale(0.5)';
+        }, 200);
     }
 
-    function updateLv() {
-        const conf = getLvConfig(currentLv);
-        const prog = (lvScore / conf.goal) * 100;
-        document.getElementById('progress-bar').style.width = `${prog}%`;
-
-        if(lvScore >= conf.goal && currentLv < 30) {
-            currentLv++;
-            lvScore = 0;
-            document.getElementById('lv-txt').innerText = currentLv.toString().padStart(2, '0');
-            hitEffect(); // 升级特效
-        }
-    }
-
-    // --- 核心渲染循环 ---
+    // --- 极速渲染主循环 ---
     function run() {
+        // AI 帧检测 (分离逻辑)
         if (video.readyState >= 2) {
             const results = handLandmarker.detectForVideo(video, performance.now());
             gCtx.clearRect(0,0,120,90);
             if(results.landmarks?.length > 0) {
-                const tip = results.landmarks[0][8];
-                // 极致响应映射
-                fingerPos.set((0.5-tip.x)*16, (0.5-tip.y)*12, 0);
+                const tip = results.landmarks[0][8]; // 食指
+                // 极致响应映射：从 Mediapipe 分辨率映射到屏幕物理坐标
+                fingerX = (1 - tip.x) * W; 
+                fingerY = tip.y * H;
                 
                 // 绘制极简骨骼（节省 Canvas 算力）
-                gCtx.strokeStyle = "#00fff2";
+                gCtx.strokeStyle = "#ff0077";
                 gCtx.strokeRect(tip.x*120-2, tip.y*90-2, 4, 4);
+            } else {
+                fingerX = -100; fingerY = -100; // 丢失手势
             }
         }
 
-        // 物理与碰撞处理
+        // 核心 Canvas 2D 绘图
+        ctx.fillStyle = "#ffffff";
+        ctx.globalAlpha = 1;
+        ctx.fillRect(0, 0, W, H); // 清屏
+        
+        // 物体更新与绘制
         for(let i=targets.length-1; i>=0; i--) {
             const t = targets[i];
-            t.position.add(t.userData.vel);
-            t.userData.vel.y -= 0.002; // 轻微重力
-
-            if(fingerPos.distanceTo(t.position) < 0.8) {
-                hitEffect();
-                score += 10;
-                lvScore += 10;
-                document.getElementById('sc-txt').innerText = score;
-                updateLv();
-                
-                scene.remove(t);
+            const isDead = t.update();
+            if (isDead) {
                 targets.splice(i, 1);
-                targetPool.push(t); // 回收
-            } else if(t.position.y < -7) {
-                scene.remove(t);
-                targets.splice(i, 1);
-                targetPool.push(t);
+            } else {
+                t.draw();
             }
         }
 
-        starPoints.rotation.y += 0.002;
-        renderer.render(scene, camera);
         requestAnimationFrame(run);
     }
+
+    // --- 自由调密度滑块交互 ---
+    document.getElementById('density').addEventListener('input', (e) => {
+        const val = e.target.value; // 1-100
+        // 将 1-100 映射到 200ms - 2000ms 的频率 (值越高，间隔越短)
+        spawnFrequency = 2200 - (val * 18);
+    });
 
     // --- 启动交互 ---
     document.getElementById('start-btn').onclick = async () => {
@@ -225,21 +255,20 @@
             video.play();
             document.getElementById('panel').style.display = 'none';
             gameActive = true;
-            spawn();
+            spawnLoop();
+            
+            // 音频处理
             const bgm = new Audio("dishimu.mp3");
             bgm.loop = true; bgm.play().catch(()=>{});
         } catch(e) {
-            alert("请确保开启摄像头权限并使用 HTTPS 访问");
+            alert("请确保使用 HTTPS 访问并开启摄像头权限");
         }
     };
 
-    window.onresize = () => {
-        renderer.setSize(window.innerWidth, window.innerHeight);
-        camera.aspect = window.innerWidth / window.innerHeight;
-        camera.updateProjectionMatrix();
-    };
+    window.addEventListener('load', () => {
+        initAI().then(() => requestAnimationFrame(run));
+    });
 
-    initAI().then(() => requestAnimationFrame(run));
 </script>
 </body>
 </html>
