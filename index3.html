@@ -28,7 +28,7 @@ Arial,
 "Microsoft YaHei";
 }
 
-/* 主canvas */
+/* 主画布 */
 
 #game{
 position:fixed;
@@ -36,7 +36,7 @@ inset:0;
 z-index:1;
 }
 
-/* 光剑canvas */
+/* 光剑 */
 
 #fx{
 position:fixed;
@@ -54,6 +54,20 @@ z-index:20;
 pointer-events:none;
 }
 
+/* 星空暗角 */
+
+#vignette{
+position:absolute;
+inset:0;
+
+background:
+radial-gradient(
+circle at center,
+transparent 40%,
+rgba(0,0,0,.72)
+);
+}
+
 /* logo */
 
 #logo{
@@ -66,19 +80,19 @@ left:50%;
 transform:translateX(-50%);
 
 font-size:
-clamp(38px,7vw,92px);
+clamp(42px,7vw,90px);
 
 font-weight:900;
 
 color:white;
 
-letter-spacing:5px;
+letter-spacing:4px;
 
 text-shadow:
 
 0 0 10px cyan,
-0 0 25px cyan,
-0 0 60px cyan;
+0 0 30px cyan,
+0 0 70px cyan;
 
 animation:
 float 3s ease-in-out infinite;
@@ -115,7 +129,7 @@ left:20px;
 top:20px;
 
 font-size:
-clamp(28px,6vw,64px);
+clamp(30px,6vw,64px);
 
 font-weight:900;
 
@@ -124,7 +138,7 @@ color:white;
 text-shadow:
 
 0 0 10px cyan,
-0 0 25px cyan;
+0 0 30px cyan;
 }
 
 /* combo */
@@ -137,11 +151,11 @@ left:20px;
 top:90px;
 
 font-size:
-clamp(20px,5vw,42px);
+clamp(20px,4vw,40px);
 
 font-weight:bold;
 
-color:#ffcc00;
+color:#ffd400;
 
 text-shadow:
 
@@ -159,7 +173,7 @@ left:20px;
 top:145px;
 
 font-size:
-clamp(18px,4vw,34px);
+clamp(18px,4vw,32px);
 
 font-weight:bold;
 
@@ -171,7 +185,7 @@ text-shadow:
 0 0 30px #ff00ff;
 }
 
-/* 提示 */
+/* tip */
 
 #tip{
 
@@ -185,10 +199,10 @@ translate(-50%,-50%);
 
 text-align:center;
 
+line-height:1.9;
+
 font-size:
 clamp(20px,4vw,36px);
-
-line-height:1.8;
 
 color:white;
 
@@ -198,13 +212,13 @@ text-shadow:
 0 0 30px cyan;
 
 animation:
-pulse 1.5s infinite;
+pulse 1.6s infinite;
 }
 
 @keyframes pulse{
 
 0%{
-opacity:.5;
+opacity:.45;
 }
 
 50%{
@@ -212,11 +226,11 @@ opacity:1;
 }
 
 100%{
-opacity:.5;
+opacity:.45;
 }
 }
 
-/* 开始按钮 */
+/* 按钮 */
 
 #start{
 
@@ -229,13 +243,13 @@ transform:
 translateX(-50%);
 
 padding:
-18px 45px;
+18px 50px;
 
 border:none;
 
 border-radius:999px;
 
-font-size:26px;
+font-size:28px;
 
 font-weight:bold;
 
@@ -252,12 +266,12 @@ linear-gradient(
 box-shadow:
 
 0 0 20px cyan,
-0 0 60px cyan;
+0 0 70px cyan;
 
 pointer-events:auto;
 }
 
-/* camera */
+/* 摄像头 */
 
 #camBox{
 
@@ -266,7 +280,7 @@ position:absolute;
 right:16px;
 bottom:16px;
 
-width:140px;
+width:145px;
 height:190px;
 
 border-radius:24px;
@@ -278,7 +292,7 @@ border:2px solid rgba(255,255,255,.25);
 box-shadow:
 
 0 0 20px cyan,
-0 0 50px rgba(0,255,255,.5);
+0 0 50px rgba(0,255,255,.45);
 }
 
 #video,
@@ -295,22 +309,6 @@ object-fit:cover;
 transform:scaleX(-1);
 }
 
-/* vignette */
-
-#vignette{
-
-position:absolute;
-inset:0;
-
-background:
-
-radial-gradient(
-circle at center,
-transparent 45%,
-rgba(0,0,0,.7)
-);
-}
-
 /* slow */
 
 #slow{
@@ -319,7 +317,7 @@ position:absolute;
 inset:0;
 
 background:
-rgba(255,255,255,.05);
+rgba(255,255,255,.06);
 
 opacity:0;
 
@@ -337,6 +335,7 @@ transition:.2s;
 <div id="ui">
 
 <div id="vignette"></div>
+
 <div id="slow"></div>
 
 <div id="logo">
@@ -359,7 +358,7 @@ RANK : CYBER
 
 ⭐ 切开星星开始游戏<br>
 
-⚔ 挥动手指释放赛博光剑<br>
+⚔ 挥动食指释放赛博光剑<br>
 
 🔥 连击进入子弹时间
 
@@ -384,16 +383,18 @@ muted>
 
 </div>
 
-<!-- THREE -->
-<script src="https://cdn.jsdelivr.net/npm/three@0.152.2/build/three.min.js"></script>
+<!-- mediapipe -->
 
-<!-- MEDIAPIPE -->
+<script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js"></script>
+
 <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js"></script>
 
 <script>
 
 /* =========================
-   基础
+   canvas
 ========================= */
 
 const game =
@@ -407,6 +408,8 @@ document.getElementById("fx");
 
 const fctx =
 fx.getContext("2d");
+
+/* resize */
 
 function resize(){
 
@@ -431,22 +434,6 @@ resize
 );
 
 /* =========================
-   星空
-========================= */
-
-const stars = [];
-
-for(let i=0;i<160;i++){
-
-stars.push({
-
-x:Math.random()*innerWidth,
-y:Math.random()*innerHeight,
-r:Math.random()*2
-});
-}
-
-/* =========================
    UI
 ========================= */
 
@@ -466,23 +453,25 @@ const slowEl =
 document.getElementById("slow");
 
 /* =========================
-   GAME
+   game state
 ========================= */
+
+let started = false;
 
 let score = 0;
 let combo = 0;
 
-let started = false;
-
 let slowmo = false;
 
 /* =========================
-   音乐
+   audio
 ========================= */
 
 const audioCtx =
-new(window.AudioContext||
-window.webkitAudioContext)();
+new(
+window.AudioContext||
+window.webkitAudioContext
+)();
 
 function slashSound(){
 
@@ -492,12 +481,14 @@ audioCtx.createOscillator();
 const gain =
 audioCtx.createGain();
 
-osc.type = "sawtooth";
+osc.type =
+"sawtooth";
 
 osc.frequency.value =
-900 + Math.random()*300;
+800 + Math.random()*300;
 
-gain.gain.value = .05;
+gain.gain.value =
+0.05;
 
 osc.connect(gain);
 
@@ -511,27 +502,46 @@ gain.gain.exponentialRampToValueAtTime(
 
 0.0001,
 
-audioCtx.currentTime + .1
+audioCtx.currentTime + .12
 );
 
 osc.stop(
-audioCtx.currentTime + .1
+audioCtx.currentTime + .12
 );
 }
 
-/* =========================
-   BGM
-========================= */
+/* bgm */
 
 const bgm =
 new Audio("dishimu.mp3");
 
 bgm.loop = true;
 
-bgm.volume = .6;
+bgm.volume = 0.6;
 
 /* =========================
-   水果
+   stars
+========================= */
+
+const stars = [];
+
+for(let i=0;i<200;i++){
+
+stars.push({
+
+x:
+Math.random()*innerWidth,
+
+y:
+Math.random()*innerHeight,
+
+r:
+Math.random()*2
+});
+}
+
+/* =========================
+   fruits
 ========================= */
 
 const fruits = [];
@@ -543,12 +553,13 @@ const emojis = [
 "🍓",
 "🍊",
 "🥝",
-"🍑"
+"🍑",
+"🍍"
 ];
 
 function spawnFruit(){
 
-const fruit = {
+fruits.push({
 
 x:
 Math.random()*innerWidth,
@@ -557,12 +568,10 @@ y:
 innerHeight + 100,
 
 vx:
-(Math.random()-.5)*4,
+(Math.random()-.5)*5,
 
 vy:
--(
-15 + Math.random()*6
-),
+-(14 + Math.random()*6),
 
 size:
 60 + Math.random()*30,
@@ -579,25 +588,28 @@ rot:0,
 
 vr:
 (Math.random()-.5)*0.2
-};
-
-fruits.push(fruit);
+});
 }
 
 /* =========================
-   开始星星
+   start star
 ========================= */
 
 const startStar = {
 
-x:innerWidth/2,
-y:innerHeight/2-100,
+x:
+innerWidth/2,
+
+y:
+innerHeight/2 - 120,
+
 size:90,
+
 rot:0
 };
 
 /* =========================
-   光剑
+   sword
 ========================= */
 
 const trail = [];
@@ -614,17 +626,17 @@ fingerX;
 let lastY =
 fingerY;
 
-let speed = 0;
+let swordSpeed = 0;
 
 /* =========================
-   粒子
+   particles
 ========================= */
 
 const particles = [];
 
 function boom(x,y){
 
-for(let i=0;i<24;i++){
+for(let i=0;i<28;i++){
 
 particles.push({
 
@@ -681,7 +693,7 @@ document.getElementById("hand");
 const hctx =
 handCanvas.getContext("2d");
 
-handCanvas.width = 140;
+handCanvas.width = 145;
 handCanvas.height = 190;
 
 /* =========================
@@ -702,66 +714,14 @@ maxNumHands:1,
 
 modelComplexity:0,
 
-minDetectionConfidence:.6,
+minDetectionConfidence:0.5,
 
-minTrackingConfidence:.5
+minTrackingConfidence:0.5
 });
 
-hands.onResults(onResults);
+/* results */
 
-/* =========================
-   摄像头
-========================= */
-
-async function initCam(){
-
-const stream =
-await navigator
-.mediaDevices
-.getUserMedia({
-
-video:{
-
-facingMode:"user",
-
-width:{ideal:320},
-
-height:{ideal:240}
-},
-
-audio:false
-});
-
-video.srcObject = stream;
-
-video.onloadedmetadata=()=>{
-
-video.play();
-
-detect();
-};
-}
-
-/* =========================
-   detect
-========================= */
-
-async function detect(){
-
-await hands.send({
-image:video
-});
-
-requestAnimationFrame(
-detect
-);
-}
-
-/* =========================
-   手势结果
-========================= */
-
-function onResults(results){
+hands.onResults(results=>{
 
 hctx.clearRect(
 0,0,
@@ -773,13 +733,41 @@ if(results.multiHandLandmarks
 &&
 results.multiHandLandmarks.length){
 
-const lm =
+const landmarks =
 results.multiHandLandmarks[0];
 
-drawHand(lm);
+/* draw skeleton */
+
+drawConnectors(
+
+hctx,
+
+landmarks,
+
+HAND_CONNECTIONS,
+
+{
+color:"#00ffff",
+lineWidth:2
+}
+);
+
+drawLandmarks(
+
+hctx,
+
+landmarks,
+
+{
+color:"#ff00ff",
+radius:2
+}
+);
+
+/* 食指 */
 
 const finger =
-lm[8];
+landmarks[8];
 
 fingerX =
 (1-finger.x)*innerWidth;
@@ -787,7 +775,18 @@ fingerX =
 fingerY =
 finger.y*innerHeight;
 
-speed = Math.hypot(
+/* 平滑 */
+
+fingerX =
+lastX + (fingerX-lastX)*0.45;
+
+fingerY =
+lastY + (fingerY-lastY)*0.45;
+
+/* speed */
+
+swordSpeed =
+Math.hypot(
 
 fingerX-lastX,
 
@@ -797,64 +796,75 @@ fingerY-lastY
 lastX = fingerX;
 lastY = fingerY;
 
+/* trail */
+
 trail.push({
 
 x:fingerX,
 y:fingerY
 });
 
-if(trail.length>18){
+if(trail.length > 18){
 
 trail.shift();
 }
 
+/* hit */
+
 checkHit();
 }
-}
+});
 
 /* =========================
-   hand draw
+   camera utils
 ========================= */
 
-function drawHand(lm){
+let cam;
 
-hctx.strokeStyle =
-"#00ffff";
+async function initCamera(){
 
-hctx.lineWidth = 2;
+const stream =
+await navigator
+.mediaDevices
+.getUserMedia({
 
-const lines = [
+video:{
 
-[0,5],[5,6],[6,7],[7,8]
-];
+facingMode:"user",
 
-for(const [a,b] of lines){
+width:{ideal:640},
 
-const p1 = lm[a];
-const p2 = lm[b];
+height:{ideal:480}
+},
 
-hctx.beginPath();
+audio:false
+});
 
-hctx.moveTo(
+video.srcObject = stream;
 
-p1.x*
-handCanvas.width,
+await video.play();
 
-p1.y*
-handCanvas.height
-);
+/* mediapipe camera */
 
-hctx.lineTo(
+cam =
+new Camera(
 
-p2.x*
-handCanvas.width,
+video,
 
-p2.y*
-handCanvas.height
-);
+{
 
-hctx.stroke();
-}
+onFrame:async()=>{
+
+await hands.send({
+image:video
+});
+},
+
+width:640,
+height:480
+});
+
+cam.start();
 }
 
 /* =========================
@@ -863,7 +873,7 @@ hctx.stroke();
 
 function checkHit(){
 
-/* 开始 */
+/* 开始游戏 */
 
 if(!started){
 
@@ -899,9 +909,9 @@ fingerY-f.y
 );
 
 if(
-d < f.size*.5
+d < f.size*0.5
 &&
-speed > 22
+swordSpeed > 18
 ){
 
 slashSound();
@@ -950,7 +960,7 @@ function draw(){
 
 requestAnimationFrame(draw);
 
-/* 清屏 */
+/* clear */
 
 ctx.clearRect(
 0,0,
@@ -962,8 +972,7 @@ innerHeight
 
 for(const s of stars){
 
-ctx.fillStyle =
-"white";
+ctx.fillStyle = "white";
 
 ctx.globalAlpha =
 Math.random();
@@ -971,6 +980,7 @@ Math.random();
 ctx.beginPath();
 
 ctx.arc(
+
 s.x,
 s.y,
 s.r,
@@ -983,11 +993,11 @@ ctx.fill();
 
 ctx.globalAlpha = 1;
 
-/* 开始星 */
+/* 开始星星 */
 
 if(!started){
 
-startStar.rot += .03;
+startStar.rot += 0.03;
 
 ctx.save();
 
@@ -1000,8 +1010,7 @@ ctx.rotate(
 startStar.rot
 );
 
-ctx.font =
-"90px serif";
+ctx.font = "90px serif";
 
 ctx.textAlign =
 "center";
@@ -1037,26 +1046,29 @@ spawnTimer = 0;
 }
 }
 
-/* 水果 */
+/* fruits */
 
 for(let i=fruits.length-1;i>=0;i--){
 
 const f = fruits[i];
 
 f.x +=
-f.vx*(slowmo?.35:1);
+f.vx*(slowmo?0.35:1);
 
 f.y +=
-f.vy*(slowmo?.35:1);
+f.vy*(slowmo?0.35:1);
 
 f.vy +=
-0.35*(slowmo?.35:1);
+0.35*(slowmo?0.35:1);
 
 f.rot += f.vr;
 
 ctx.save();
 
-ctx.translate(f.x,f.y);
+ctx.translate(
+f.x,
+f.y
+);
 
 ctx.rotate(f.rot);
 
@@ -1074,7 +1086,7 @@ f.emoji,
 
 ctx.restore();
 
-if(f.y > innerHeight+200){
+if(f.y > innerHeight + 200){
 
 fruits.splice(i,1);
 
@@ -1085,7 +1097,7 @@ comboEl.innerHTML =
 }
 }
 
-/* 粒子 */
+/* particles */
 
 for(let i=particles.length-1;i>=0;i--){
 
@@ -1094,7 +1106,7 @@ const p = particles[i];
 p.x += p.vx;
 p.y += p.vy;
 
-p.life -= .03;
+p.life -= 0.03;
 
 ctx.globalAlpha =
 p.life;
@@ -1114,7 +1126,7 @@ Math.PI*2
 
 ctx.fill();
 
-if(p.life<=0){
+if(p.life <= 0){
 
 particles.splice(i,1);
 }
@@ -1130,12 +1142,15 @@ innerWidth,
 innerHeight
 );
 
-if(trail.length>1){
+if(trail.length > 1){
 
 for(let i=1;i<trail.length;i++){
 
-const p1 = trail[i-1];
-const p2 = trail[i];
+const p1 =
+trail[i-1];
+
+const p2 =
+trail[i];
 
 const alpha =
 i/trail.length;
@@ -1153,15 +1168,21 @@ fctx.shadowColor =
 
 fctx.beginPath();
 
-fctx.moveTo(p1.x,p1.y);
+fctx.moveTo(
+p1.x,
+p1.y
+);
 
-fctx.lineTo(p2.x,p2.y);
+fctx.lineTo(
+p2.x,
+p2.y
+);
 
 fctx.stroke();
 }
 }
 
-/* 核心光点 */
+/* 光点 */
 
 fctx.beginPath();
 
@@ -1209,7 +1230,18 @@ document
 .style.display =
 "none";
 
-initCam();
+try{
+
+await initCamera();
+
+}catch(err){
+
+alert(
+"摄像头启动失败，请允许摄像头权限"
+);
+
+console.error(err);
+}
 };
 
 </script>
