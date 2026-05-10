@@ -3,47 +3,72 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>天宇Game - 手势切水果</title>
+    <title>天宇Game - 极速进化版</title>
     <style>
-        body { margin: 0; overflow: hidden; background: #000; font-family: 'Microsoft YaHei', sans-serif; touch-action: none; }
-        #canvas-container { width: 100vw; height: 100vh; background: radial-gradient(circle, #1a1a2e 0%, #000000 100%); }
+        :root { --main-color: #00fff2; }
+        body { margin: 0; overflow: hidden; background: #000; font-family: 'Segoe UI', sans-serif; touch-action: none; }
         
-        #game-title {
-            position: absolute; top: 20px; left: 20px; color: #00ffcc;
-            font-size: 32px; font-weight: bold; text-shadow: 0 0 10px #00ffcc; z-index: 10;
+        /* 炫酷UI层 */
+        #game-ui {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none; z-index: 10;
+        }
+        .header { padding: 20px; display: flex; justify-content: space-between; align-items: flex-start; }
+        .brand { 
+            color: var(--main-color); font-size: 38px; font-weight: 900; 
+            text-shadow: 0 0 15px var(--main-color), 0 0 30px var(--main-color);
+            letter-spacing: 2px; filter: italic;
+        }
+        .score-box { color: white; font-size: 28px; text-align: right; }
+        
+        /* 连击提示 */
+        #combo-text {
+            position: absolute; top: 40%; right: 10%; font-size: 60px;
+            color: #ff0055; font-weight: 900; font-style: italic;
+            opacity: 0; transform: scale(0.5); transition: 0.2s cubic-bezier(0.18, 0.89, 0.32, 1.28);
         }
 
-        #ui-overlay {
-            position: absolute; top: 70px; left: 20px; color: white;
-            font-size: 20px; z-index: 10;
+        /* 视频反馈窗 */
+        #video-preview {
+            position: absolute; bottom: 20px; right: 20px; width: 140px; height: 105px;
+            border: 2px solid var(--main-color); border-radius: 12px;
+            box-shadow: 0 0 15px var(--main-color); overflow: hidden; transform: scaleX(-1);
         }
+        video, canvas#output_canvas { position: absolute; width: 100%; height: 100%; object-fit: cover; }
 
-        #video-container {
-            position: absolute; bottom: 20px; right: 20px;
-            width: 180px; height: 135px; border: 2px solid #00ffcc;
-            border-radius: 8px; overflow: hidden; transform: scaleX(-1); z-index: 20;
+        /* 遮罩界面 */
+        #overlay {
+            position: absolute; inset: 0; background: rgba(0,0,0,0.85);
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            z-index: 100; transition: opacity 0.5s;
         }
-        canvas#output_canvas { width: 100%; height: 100%; object-fit: cover; }
-        video#input_video { display: none; }
-
-        #status-msg {
-            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            color: #00ffcc; font-size: 18px; text-align: center; z-index: 100;
-            line-height: 1.6; background: rgba(0,0,0,0.7); padding: 20px; border-radius: 10px;
+        .start-btn {
+            padding: 15px 40px; font-size: 24px; background: none; border: 2px solid var(--main-color);
+            color: var(--main-color); border-radius: 50px; cursor: pointer;
+            box-shadow: 0 0 20px var(--main-color); transition: 0.3s;
         }
+        .start-btn:hover { background: var(--main-color); color: #000; }
+        
+        #status-info { color: #888; margin-top: 20px; font-size: 14px; }
     </style>
 </head>
 <body>
 
-    <div id="game-title">天宇game</div>
-    <div id="ui-overlay">得分: <span id="score">0</span></div>
-    
-    <div id="status-msg">
-        🚀 正在初始化引擎...<br>
-        <span id="detail-msg">正在请求相机权限...</span>
+    <div id="game-ui">
+        <div class="header">
+            <div class="brand">天宇GAME</div>
+            <div class="score-box">得分: <span id="score-val">0</span></div>
+        </div>
+        <div id="combo-text">COMBO X2</div>
     </div>
 
-    <div id="video-container">
+    <div id="overlay">
+        <div class="brand" style="margin-bottom: 40px;">GESTURE SLICE</div>
+        <button class="start-btn" id="start-node">准备好了</button>
+        <div id="status-info">正在加载 AI 神经元...</div>
+    </div>
+
+    <div id="video-preview">
         <video id="input_video" playsinline muted></video>
         <canvas id="output_canvas"></canvas>
     </div>
@@ -51,217 +76,214 @@
     <div id="canvas-container"></div>
 
     <script type="importmap">
-        {
-            "imports": {
-                "three": "https://unpkg.com/three@0.160.0/build/three.module.js"
-            }
-        }
+        { "imports": { "three": "https://unpkg.com/three@0.160.0/build/three.module.js" } }
     </script>
 
     <script type="module">
         import * as THREE from 'three';
         import { HandLandmarker, FilesetResolver } from "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.0";
 
-        const statusDetail = document.getElementById('detail-msg');
-        const statusBox = document.getElementById('status-msg');
+        // --- 核心变量 ---
+        let score = 0, combo = 0, lastSliceTime = 0;
+        let gameActive = false, handReady = false;
+        const emojiItems = ['⭐', '💎', '🔥', '🍭', '👾', '🌈'];
+        const objects = [], particles = [];
 
-        let score = 0;
-        let gameRunning = false;
-        const emojiList = ['🧒', '👧', '👦', '👶', '🧑', '👱'];
-        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        let bgm = null;
-
-        // --- 3D 渲染环境 ---
+        // --- 三维引擎：深邃星空 ---
         const scene = new THREE.Scene();
         const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+        const renderer = new THREE.WebGLRenderer({ antialias: false, alpha: true }); // 关掉抗锯齿提升性能
         renderer.setSize(window.innerWidth, window.innerHeight);
-        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
         document.getElementById('canvas-container').appendChild(renderer.domElement);
 
-        const light = new THREE.PointLight(0xffffff, 100, 100);
+        // 背景星辰
+        const starGeo = new THREE.BufferGeometry();
+        const starCoords = [];
+        for(let i=0; i<1500; i++) {
+            starCoords.push((Math.random()-0.5)*100, (Math.random()-0.5)*100, -50);
+        }
+        starGeo.setAttribute('position', new THREE.Float32BufferAttribute(starCoords, 3));
+        const starMat = new THREE.PointsMaterial({ color: 0xffffff, size: 0.1 });
+        scene.add(new THREE.Points(starGeo, starMat));
+
+        const light = new THREE.DirectionalLight(0xffffff, 2);
         light.position.set(0, 5, 5);
-        scene.add(light, new THREE.AmbientLight(0xffffff, 1));
-        camera.position.z = 5;
+        scene.add(light, new THREE.AmbientLight(0x404040, 2));
+        camera.position.z = 6;
 
-        // --- 开始按钮 (3D星) ---
-        const startStar = new THREE.Mesh(
-            new THREE.OctahedronGeometry(0.6, 0),
-            new THREE.MeshPhongMaterial({ color: 0xffff00, emissive: 0xffaa00 })
-        );
-        scene.add(startStar);
-
-        // --- 强化光剑拖尾 ---
+        // --- 光剑拖尾 ---
+        const trailMax = 12;
         const trailPoints = [];
-        const trailMax = 15;
-        const trailGeometry = new THREE.BufferGeometry();
-        const trailMaterial = new THREE.MeshBasicMaterial({ 
-            color: 0x00ffff, transparent: true, opacity: 0.7, side: THREE.DoubleSide, blending: THREE.AdditiveBlending 
-        });
-        const trailMesh = new THREE.Mesh(trailGeometry, trailMaterial);
+        const trailGeo = new THREE.BufferGeometry();
+        const trailMat = new THREE.MeshBasicMaterial({ color: 0x00ffff, transparent: true, opacity: 0.6, side: THREE.DoubleSide, blending: THREE.AdditiveBlending });
+        const trailMesh = new THREE.Mesh(trailGeo, trailMat);
         scene.add(trailMesh);
 
-        // --- 核心逻辑 ---
+        // --- AI 手势识别 ---
         const video = document.getElementById("input_video");
-        const canvasElement = document.getElementById("output_canvas");
-        const canvasCtx = canvasElement.getContext("2d");
+        const canvasCtx = document.getElementById("output_canvas").getContext("2d");
         let handLandmarker;
-        let lastVideoTime = -1;
         let fingerPos = new THREE.Vector3();
 
-        async function setup() {
-            try {
-                // 1. 先启动相机
-                statusDetail.innerText = "正在激活相机...";
-                const stream = await navigator.mediaDevices.getUserMedia({ 
-                    video: { facingMode: "user", width: 640, height: 480 } 
-                });
-                video.srcObject = stream;
-                await video.play();
-
-                // 2. 加载 AI 模型
-                statusDetail.innerText = "正在从云端载入 AI 手势模型 (约 5MB)...";
-                const vision = await FilesetResolver.forVisionTasks("https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.0/wasm");
-                handLandmarker = await HandLandmarker.createFromOptions(vision, {
-                    baseOptions: { 
-                        modelAssetPath: `https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/1/hand_landmarker.task`,
-                        delegate: "GPU" 
-                    },
-                    runningMode: "VIDEO", numHands: 1
-                });
-
-                statusBox.style.display = 'none';
-                initBGM();
-                requestAnimationFrame(renderLoop);
-            } catch (err) {
-                statusDetail.innerHTML = `<span style="color:red">失败: ${err.message}</span><br>请确保在 HTTPS 环境下打开并允许相机。`;
-            }
+        async function initAI() {
+            const vision = await FilesetResolver.forVisionTasks("https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.0/wasm");
+            handLandmarker = await HandLandmarker.createFromOptions(vision, {
+                baseOptions: { modelAssetPath: `https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/1/hand_landmarker.task`, delegate: "GPU" },
+                runningMode: "VIDEO", numHands: 1
+            });
+            document.getElementById('status-info').innerText = "系统就绪，点击开始";
         }
 
-        function initBGM() {
-            bgm = new Audio();
-            bgm.src = "dishimu.mp3";
-            bgm.loop = true;
-        }
-
-        function playSliceSound() {
-            if (audioCtx.state === 'suspended') audioCtx.resume();
-            const osc = audioCtx.createOscillator();
-            const gain = audioCtx.createGain();
-            osc.connect(gain); gain.connect(audioCtx.destination);
-            osc.frequency.setTargetAtTime(800, audioCtx.currentTime, 0.01);
-            osc.frequency.exponentialRampToValueAtTime(40, audioCtx.currentTime + 0.1);
-            gain.gain.setTargetAtTime(0.3, audioCtx.currentTime, 0.01);
-            osc.start(); osc.stop(audioCtx.currentTime + 0.1);
-        }
-
-        const fruits = [];
-        function spawnFruit() {
-            if (!gameRunning) return;
+        // --- 游戏逻辑 ---
+        function createObject() {
+            if(!gameActive) return;
             const canvas = document.createElement('canvas');
             canvas.width = 128; canvas.height = 128;
             const ctx = canvas.getContext('2d');
-            ctx.font = '80px Arial'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-            ctx.fillText(emojiList[Math.floor(Math.random() * emojiList.length)], 64, 64);
+            ctx.font = '90px Arial'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+            ctx.fillText(emojiItems[Math.floor(Math.random()*emojiItems.length)], 64, 64);
             
-            const sprite = new THREE.Sprite(new THREE.SpriteMaterial({ map: new THREE.CanvasTexture(canvas) }));
-            sprite.scale.set(0.8, 0.8, 1);
-            const group = new THREE.Group();
-            group.add(sprite);
-            group.position.set((Math.random() - 0.5) * 7, -5, 0);
-            group.userData = { vel: new THREE.Vector3((Math.random() - 0.5) * 0.1, 0.2, 0), rot: (Math.random()-0.5)*0.1 };
-            scene.add(group);
-            fruits.push(group);
+            const tex = new THREE.CanvasTexture(canvas);
+            const mat = new THREE.SpriteMaterial({ map: tex });
+            const sprite = new THREE.Sprite(mat);
+            
+            sprite.position.set((Math.random()-0.5)*8, -6, 0);
+            sprite.userData = { vel: new THREE.Vector3((Math.random()-0.5)*0.1, 0.22 + Math.random()*0.1, 0), rot: (Math.random()-0.5)*0.1 };
+            scene.add(sprite);
+            objects.push(sprite);
+            
+            // 随分数增加难度
+            setTimeout(createObject, Math.max(400, 1500 - score*2));
         }
 
-        function renderLoop() {
-            if (video.currentTime !== lastVideoTime) {
-                lastVideoTime = video.currentTime;
+        function createExplosion(pos) {
+            for(let i=0; i<12; i++) {
+                const p = new THREE.Mesh(new THREE.BoxGeometry(0.1, 0.1, 0.1), new THREE.MeshBasicMaterial({ color: 0x00ffff }));
+                p.position.copy(pos);
+                p.userData.vel = new THREE.Vector3((Math.random()-0.5)*0.3, (Math.random()-0.5)*0.3, (Math.random()-0.5)*0.3);
+                p.userData.life = 1.0;
+                scene.add(p);
+                particles.push(p);
+            }
+        }
+
+        function triggerCombo() {
+            const now = Date.now();
+            if(now - lastSliceTime < 600) combo++;
+            else combo = 1;
+            lastSliceTime = now;
+
+            if(combo > 1) {
+                const el = document.getElementById('combo-text');
+                el.innerText = `COMBO X${combo}`;
+                el.style.opacity = 1; el.style.transform = 'scale(1.2)';
+                setTimeout(() => { el.style.opacity = 0; el.style.transform = 'scale(0.5)'; }, 500);
+            }
+        }
+
+        // --- 主循环 ---
+        function loop() {
+            // 手势检测
+            if (video.readyState >= 2) {
                 const results = handLandmarker.detectForVideo(video, performance.now());
-                
-                canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
+                canvasCtx.clearRect(0,0,140,105);
                 if (results.landmarks && results.landmarks.length > 0) {
-                    const landmarks = results.landmarks[0];
-                    drawConnectors(landmarks);
-                    
-                    const indexTip = landmarks[8];
-                    // 映射坐标
-                    const tx = (0.5 - indexTip.x) * 12 * (window.innerWidth / window.innerHeight);
-                    const ty = (0.5 - indexTip.y) * 12;
-                    fingerPos.lerp(new THREE.Vector3(tx, ty, 0), 0.7);
+                    const tip = results.landmarks[0][8];
+                    const tx = (0.5 - tip.x) * 14 * (window.innerWidth/window.innerHeight);
+                    const ty = (0.5 - tip.y) * 14;
+                    fingerPos.lerp(new THREE.Vector3(tx, ty, 0), 0.4);
                     updateTrail(fingerPos.clone());
-                    
-                    // 碰撞检测
-                    if (!gameRunning && fingerPos.distanceTo(startStar.position) < 0.8) {
-                        gameRunning = true;
-                        startStar.visible = false;
-                        if (bgm) bgm.play().catch(e => console.log("等待点击播放音乐"));
-                        setInterval(spawnFruit, 1000);
-                    }
-                    for (let i = fruits.length - 1; i >= 0; i--) {
-                        if (fingerPos.distanceTo(fruits[i].position) < 0.7) {
-                            playSliceSound();
-                            scene.remove(fruits[i]);
-                            fruits.splice(i, 1);
-                            score += 10;
-                            document.getElementById('score').innerText = score;
-                        }
-                    }
+                    drawHand(results.landmarks[0]);
                 } else {
                     updateTrail(null);
                 }
             }
 
-            if (!gameRunning) {
-                startStar.rotation.y += 0.05;
-                startStar.rotation.z += 0.02;
+            // 物体更新与碰撞
+            for(let i=objects.length-1; i>=0; i--) {
+                const obj = objects[i];
+                obj.position.add(obj.userData.vel);
+                obj.userData.vel.y -= 0.005; // 重力
+                
+                if(gameActive && fingerPos.distanceTo(obj.position) < 0.8) {
+                    createExplosion(obj.position);
+                    triggerCombo();
+                    score += 10 * combo;
+                    document.getElementById('score-val').innerText = score;
+                    scene.remove(obj);
+                    objects.splice(i, 1);
+                    continue;
+                }
+                if(obj.position.y < -7) {
+                    scene.remove(obj);
+                    objects.splice(i, 1);
+                }
             }
 
-            fruits.forEach((f, idx) => {
-                f.position.add(f.userData.vel);
-                f.userData.vel.y -= 0.005;
-                f.rotation.z += f.userData.rot;
-            });
+            // 粒子更新
+            for(let i=particles.length-1; i>=0; i--) {
+                const p = particles[i];
+                p.position.add(p.userData.vel);
+                p.userData.life -= 0.02;
+                p.material.opacity = p.userData.life;
+                if(p.userData.life <= 0) {
+                    scene.remove(p);
+                    particles.splice(i, 1);
+                }
+            }
 
             renderer.render(scene, camera);
-            requestAnimationFrame(renderLoop);
+            requestAnimationFrame(loop);
         }
 
         function updateTrail(pos) {
-            if (!pos) { trailPoints.length > 0 && trailPoints.shift(); } 
-            else { trailPoints.push(pos); if (trailPoints.length > trailMax) trailPoints.shift(); }
-            if (trailPoints.length < 2) { trailMesh.visible = false; return; }
+            if(!pos) { trailPoints.length > 0 && trailPoints.shift(); }
+            else { trailPoints.push(pos); if(trailPoints.length > trailMax) trailPoints.shift(); }
+            if(trailPoints.length < 2) { trailMesh.visible = false; return; }
             trailMesh.visible = true;
             const v = [];
             trailPoints.forEach((p, i) => {
-                const w = (i / trailPoints.length) * 0.25;
-                v.push(p.x, p.y - w, p.z, p.x, p.y + w, p.z);
+                const w = (i / trailPoints.length) * 0.3;
+                v.push(p.x, p.y-w, p.z, p.x, p.y+w, p.z);
             });
-            trailGeometry.setAttribute('position', new THREE.Float32BufferAttribute(v, 3));
+            trailGeo.setAttribute('position', new THREE.Float32BufferAttribute(v, 3));
         }
 
-        function drawConnectors(landmarks) {
-            canvasCtx.strokeStyle = "#00ffcc";
-            canvasCtx.lineWidth = 3;
-            const conns = [[0,1,2,3,4], [0,5,6,7,8], [0,9,10,11,12], [0,13,14,15,16], [0,17,18,19,20], [5,9,13,17,5]];
-            conns.forEach(p => {
+        function drawHand(pts) {
+            canvasCtx.strokeStyle = "#00fff2"; canvasCtx.lineWidth = 2;
+            [[0,5,9,13,17,0],[5,6,7,8],[9,10,11,12],[13,14,15,16],[17,18,19,20]].forEach(line => {
                 canvasCtx.beginPath();
-                p.forEach((idx, i) => {
-                    const x = landmarks[idx].x * canvasElement.width;
-                    const y = landmarks[idx].y * canvasElement.height;
-                    i === 0 ? canvasCtx.moveTo(x, y) : canvasCtx.lineTo(x, y);
+                line.forEach((idx, i) => {
+                    const p = pts[idx];
+                    i==0 ? canvasCtx.moveTo(p.x*140, p.y*105) : canvasCtx.lineTo(p.x*140, p.y*105);
                 });
                 canvasCtx.stroke();
             });
         }
 
-        window.addEventListener('resize', () => {
+        // --- 事件绑定 ---
+        document.getElementById('start-node').onclick = async () => {
+            const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" } });
+            video.srcObject = stream;
+            video.play();
+            document.getElementById('overlay').style.opacity = '0';
+            setTimeout(() => {
+                document.getElementById('overlay').style.display = 'none';
+                gameActive = true;
+                createObject();
+            }, 500);
+            // 激活音频
+            const bgm = new Audio("dishimu.mp3");
+            bgm.loop = true; bgm.play().catch(()=>{});
+        };
+
+        window.onresize = () => {
             camera.aspect = window.innerWidth / window.innerHeight;
             camera.updateProjectionMatrix();
             renderer.setSize(window.innerWidth, window.innerHeight);
-        });
+        };
 
-        setup();
+        initAI().then(() => requestAnimationFrame(loop));
     </script>
 </body>
 </html>
