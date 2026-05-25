@@ -1,530 +1,660 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>闪卡词汇 - 优雅的背单词工坊</title>
-    <style>
-        :root {
-            --primary: #4f46e5;
-            --primary-hover: #4338ca;
-            --background: #f8fafc;
-            --card-front: #ffffff;
-            --card-back: #f1f5f9;
-            --text-main: #1e293b;
-            --text-muted: #64748b;
-            --favorite-color: #f59e0b;
-        }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-        }
-
-        body {
-            background: linear-gradient(135deg, #e0e7ff 0%, #f1f5f9 100%);
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-            color: var(--text-main);
-        }
-
-        .container {
-            width: 100%;
-            max-width: 480px;
-            display: flex;
-            flex-direction: column;
-            gap: 24px;
-        }
-
-        /* 顶部导航与选择区 */
-        .header-panel {
-            background: rgba(255, 255, 255, 0.8);
-            backdrop-filter: blur(10px);
-            padding: 16px 20px;
-            border-radius: 16px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .brand-title {
-            font-size: 1.2rem;
-            font-weight: 700;
-            color: var(--primary);
-            letter-spacing: 0.5px;
-        }
-
-        .select-wrapper {
-            position: relative;
-        }
-
-        select {
-            appearance: none;
-            background-color: #ffffff;
-            border: 1px solid #cbd5e1;
-            padding: 8px 32px 8px 16px;
-            border-radius: 8px;
-            font-size: 0.9rem;
-            color: var(--text-main);
-            cursor: pointer;
-            outline: none;
-            transition: all 0.2s;
-        }
-
-        select:focus {
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15);
-        }
-
-        /* 核心卡片容器（3D翻转舞台） */
-        .card-stage {
-            perspective: 1000px;
-            height: 280px;
-            width: 100%;
-            cursor: pointer;
-        }
-
-        .card {
-            width: 100%;
-            height: 100%;
-            position: relative;
-            transform-style: preserve-3d;
-            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05), 0 10px 10px -5px rgba(0, 0, 0, 0.02);
-            border-radius: 24px;
-        }
-
-        .card.is-flipped {
-            transform: rotateY(180deg);
-        }
-
-        .card-face {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            backface-visibility: hidden;
-            border-radius: 24px;
-            padding: 30px;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            background: var(--card-front);
-            border: 1px solid rgba(255, 255, 255, 0.7);
-        }
-
-        /* 卡片正面 */
-        .card-front {
-            background: #ffffff;
-        }
-
-        .card-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            width: 100%;
-        }
-
-        .index-indicator {
-            font-size: 0.85rem;
-            color: var(--text-muted);
-            background: #f1f5f9;
-            padding: 4px 10px;
-            border-radius: 20px;
-        }
-
-        .action-icon-btn {
-            background: none;
-            border: none;
-            cursor: pointer;
-            padding: 6px;
-            border-radius: 50%;
-            transition: background 0.2s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .action-icon-btn:hover {
-            background: #f1f5f9;
-        }
-
-        .word-body {
-            text-align: center;
-            margin: auto 0;
-        }
-
-        .word-text {
-            font-size: 2.4rem;
-            font-weight: 800;
-            color: var(--text-main);
-            letter-spacing: -0.5px;
-            margin-bottom: 8px;
-        }
-
-        .word-phonetic {
-            font-family: "Lucida Sans Unicode", sans-serif;
-            font-size: 1.1rem;
-            color: var(--primary);
-        }
-
-        .card-footer-tip {
-            text-align: center;
-            font-size: 0.8rem;
-            color: var(--text-muted);
-            opacity: 0.7;
-        }
-
-        /* 卡片背面 */
-        .card-back {
-            background: linear-gradient(135deg, #f8fafc 0%, #edf2f7 100%);
-            transform: rotateY(180deg);
-        }
-
-        .translation-title {
-            font-size: 0.85rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            color: var(--text-muted);
-            border-bottom: 1px solid #e2e8f0;
-            padding-bottom: 6px;
-        }
-
-        .translation-body {
-            margin: auto 0;
-        }
-
-        .word-trans {
-            font-size: 1.4rem;
-            font-weight: 700;
-            color: #0f172a;
-            margin-bottom: 12px;
-            line-height: 1.4;
-        }
-
-        .word-example {
-            font-size: 0.95rem;
-            color: var(--text-muted);
-            line-height: 1.5;
-            font-style: italic;
-        }
-
-        /* 控制按钮区 */
-        .control-panel {
-            display: flex;
-            justify-content: space-between;
-            gap: 16px;
-        }
-
-        .btn {
-            flex: 1;
-            background: #ffffff;
-            border: 1px solid #e2e8f0;
-            padding: 14px;
-            border-radius: 16px;
-            font-size: 1rem;
-            font-weight: 600;
-            color: var(--text-main);
-            cursor: pointer;
-            transition: all 0.2s ease;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
-
-        .btn:hover {
-            background: #f8fafc;
-            border-color: #cbd5e1;
-            transform: translateY(-1px);
-        }
-
-        .btn:active {
-            transform: translateY(1px);
-        }
-
-        .btn-primary {
-            background: var(--primary);
-            color: #ffffff;
-            border: none;
-        }
-
-        .btn-primary:hover {
-            background: var(--primary-hover);
-            border-color: transparent;
-        }
-
-        /* SVG 图标基础样式 */
-        .icon {
-            width: 20px;
-            height: 20px;
-            fill: none;
-            stroke: currentColor;
-            stroke-width: 2;
-            stroke-linecap: round;
-            stroke-linejoin: round;
-        }
-
-        .icon-star.is-active {
-            fill: var(--favorite-color);
-            stroke: var(--favorite-color);
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WordForge Pro ·天宇 智能单词学习</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Mono:wght@300;400;500&family=Noto+Sans+SC:wght@300;400;700&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#0d0d0d;--paper:#f5f0e8;--accent:#c84b2f;--gold:#d4a853;--muted:#8a8070;--green:#2d6a4f;--blue:#2b5ea7;--card-bg:#fffef9;--shadow:0 8px 40px rgba(13,13,13,0.12);--border:1px solid rgba(13,13,13,0.12);--fav:#e85d8a}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Noto Sans SC',sans-serif;background:var(--paper);color:var(--ink);min-height:100vh;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");pointer-events:none;z-index:9999;opacity:.5}
+header{display:flex;align-items:center;justify-content:space-between;padding:16px 36px;border-bottom:var(--border);position:sticky;top:0;background:rgba(245,240,232,0.93);backdrop-filter:blur(14px);z-index:100;gap:16px;flex-wrap:wrap}
+.logo{font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:900;white-space:nowrap}
+.logo span{color:var(--accent)}
+.logo sub{font-size:.52rem;background:var(--accent);color:#fff;padding:2px 8px;border-radius:50px;vertical-align:middle;margin-left:6px;font-family:'DM Mono',monospace;letter-spacing:.05em}
+.header-right{display:flex;gap:16px;align-items:center;flex-wrap:wrap}
+.hstat{display:flex;flex-direction:column;align-items:center;gap:1px;font-family:'DM Mono',monospace;font-size:.72rem;color:var(--muted)}
+.hstat-num{font-size:.95rem;font-weight:600;color:var(--ink)}
+.btn-fav-tab{display:flex;align-items:center;gap:6px;padding:8px 16px;border-radius:50px;border:1.5px solid var(--fav);background:rgba(232,93,138,.08);color:var(--fav);font-family:'Noto Sans SC',sans-serif;font-size:.82rem;font-weight:700;cursor:pointer;transition:all .2s}
+.btn-fav-tab:hover,.btn-fav-tab.active{background:var(--fav);color:#fff}
+.container{max-width:900px;margin:0 auto;padding:32px 24px}
+.level-section{margin-bottom:24px}
+.section-label{font-family:'DM Mono',monospace;font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:10px}
+.level-grid{display:flex;gap:10px;flex-wrap:wrap}
+.level-btn{padding:10px 18px;border-radius:12px;border:1.5px solid rgba(13,13,13,.12);background:var(--card-bg);cursor:pointer;font-family:'Noto Sans SC',sans-serif;transition:all .18s;display:flex;flex-direction:column;align-items:center;gap:3px;min-width:86px}
+.level-btn:hover{transform:translateY(-3px);box-shadow:var(--shadow)}
+.lv-icon{font-size:1.3rem}
+.lv-name{font-size:.84rem;font-weight:700}
+.lv-desc{font-size:.66rem;color:var(--muted);font-family:'DM Mono',monospace}
+.level-btn.active{color:#fff;border-color:transparent;transform:translateY(-3px);box-shadow:var(--shadow)}
+.level-btn[data-lv="elementary"].active{background:linear-gradient(135deg,#f7971e,#ffd200)}
+.level-btn[data-lv="middle"].active{background:linear-gradient(135deg,#56ccf2,#2f80ed)}
+.level-btn[data-lv="high"].active{background:linear-gradient(135deg,#6fcf97,#219653)}
+.level-btn[data-lv="cet4"].active{background:linear-gradient(135deg,#c84b2f,#e07b5f)}
+.level-btn[data-lv="cet6"].active{background:linear-gradient(135deg,#7b2ff7,#b45fe8)}
+.level-btn.active .lv-desc{color:rgba(255,255,255,.7)}
+.topic-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px}
+.topic-chip{padding:7px 14px;border-radius:50px;border:1.5px solid rgba(13,13,13,.12);background:var(--card-bg);cursor:pointer;font-size:.8rem;font-family:'Noto Sans SC',sans-serif;transition:all .18s;white-space:nowrap}
+.topic-chip:hover{border-color:var(--ink)}
+.topic-chip.active{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.gen-bar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:26px;padding:14px 18px;background:var(--card-bg);border:var(--border);border-radius:16px}
+.gen-bar label{font-size:.82rem;color:var(--muted)}
+.input-count{width:70px;padding:7px 11px;border-radius:8px;border:1.5px solid rgba(13,13,13,.14);background:var(--paper);font-family:'DM Mono',monospace;font-size:.9rem;color:var(--ink)}
+.input-count:focus{outline:none;border-color:var(--ink)}
+.btn-gen{padding:10px 22px;border-radius:50px;border:none;cursor:pointer;background:var(--ink);color:var(--paper);font-family:'Noto Sans SC',sans-serif;font-size:.88rem;font-weight:700;transition:all .2s;display:flex;align-items:center;gap:7px}
+.btn-gen:hover{background:#222;transform:translateY(-2px);box-shadow:0 5px 18px rgba(13,13,13,.22)}
+.btn-gen:disabled{opacity:.5;cursor:not-allowed;transform:none}
+.btn-clear{padding:10px 16px;border-radius:50px;border:1.5px solid rgba(13,13,13,.14);background:transparent;cursor:pointer;font-size:.82rem;color:var(--muted);font-family:'Noto Sans SC',sans-serif;transition:all .2s}
+.btn-clear:hover{border-color:var(--accent);color:var(--accent)}
+.mode-tabs{display:flex;gap:6px;margin-bottom:22px;background:rgba(13,13,13,.06);border-radius:12px;padding:5px}
+.mode-tab{flex:1;padding:9px 10px;border:none;background:transparent;border-radius:8px;font-family:'Noto Sans SC',sans-serif;font-size:.84rem;cursor:pointer;color:var(--muted);transition:all .2s}
+.mode-tab.active{background:var(--card-bg);color:var(--ink);box-shadow:var(--shadow);font-weight:700}
+.progress-wrap{display:flex;align-items:center;gap:14px;margin-bottom:20px}
+.progress-bar{flex:1;height:5px;background:rgba(13,13,13,.1);border-radius:3px;overflow:hidden}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--gold));border-radius:3px;transition:width .4s ease}
+.progress-text{font-family:'DM Mono',monospace;font-size:.72rem;color:var(--muted);white-space:nowrap}
+.card-wrap{perspective:1200px;margin-bottom:18px}
+.flash-card{width:100%;min-height:288px;background:var(--card-bg);border-radius:22px;border:var(--border);box-shadow:var(--shadow);position:relative;transform-style:preserve-3d;transition:transform .6s cubic-bezier(.34,1.56,.64,1);user-select:none}
+.flash-card.flipped{transform:rotateY(180deg)}
+.card-face{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:36px 44px;backface-visibility:hidden;border-radius:22px}
+.card-back{transform:rotateY(180deg);background:var(--ink);color:var(--paper);border-radius:22px}
+.card-top-actions{position:absolute;top:14px;right:14px;display:flex;gap:8px;z-index:10}
+.icon-btn{width:36px;height:36px;border-radius:10px;border:none;background:rgba(13,13,13,.06);cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center;transition:all .18s;color:var(--muted)}
+.icon-btn:hover{background:rgba(13,13,13,.12);transform:scale(1.1)}
+.icon-btn.fav-on{background:rgba(232,93,138,.12);color:var(--fav)}
+.icon-btn.speaking{background:rgba(43,94,167,.12);color:var(--blue);animation:pulse .8s ease infinite}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.12)}}
+.card-label{font-family:'DM Mono',monospace;font-size:.67rem;letter-spacing:.14em;color:var(--muted);margin-bottom:12px;text-transform:uppercase}
+.card-back .card-label{color:rgba(245,240,232,.4)}
+.card-word{font-family:'Playfair Display',serif;font-size:clamp(2rem,6vw,3.8rem);font-weight:900;line-height:1;letter-spacing:-.02em;text-align:center;cursor:pointer;transition:color .15s}
+.card-word:hover{color:var(--accent)}
+.card-phonetic{font-family:'DM Mono',monospace;font-size:.9rem;color:var(--accent);margin-top:10px}
+.card-hint{font-size:.8rem;color:var(--muted);margin-top:14px;font-style:italic;text-align:center;max-width:380px;line-height:1.55}
+.card-translation{font-size:1.45rem;font-weight:700;text-align:center;color:var(--paper);margin-bottom:10px}
+.card-example{font-size:.85rem;text-align:center;line-height:1.7;color:rgba(245,240,232,.7);font-style:italic;max-width:400px}
+.card-example em{color:var(--gold);font-style:normal;font-weight:700}
+.flip-hint{position:absolute;bottom:15px;right:18px;font-family:'DM Mono',monospace;font-size:.64rem;color:var(--muted)}
+.rating-row{display:flex;gap:10px;justify-content:center;margin-bottom:22px;flex-wrap:wrap}
+.btn-rate{padding:10px 20px;border-radius:50px;border:none;cursor:pointer;font-family:'Noto Sans SC',sans-serif;font-size:.85rem;font-weight:700;transition:all .2s;display:flex;align-items:center;gap:6px}
+.btn-rate.forget{background:rgba(200,75,47,.1);color:var(--accent);border:1.5px solid var(--accent)}
+.btn-rate.forget:hover{background:var(--accent);color:#fff;transform:translateY(-2px)}
+.btn-rate.hard{background:rgba(212,168,83,.12);color:var(--gold);border:1.5px solid var(--gold)}
+.btn-rate.hard:hover{background:var(--gold);color:#fff;transform:translateY(-2px)}
+.btn-rate.know{background:rgba(45,106,79,.1);color:var(--green);border:1.5px solid var(--green)}
+.btn-rate.know:hover{background:var(--green);color:#fff;transform:translateY(-2px)}
+.btn-flip{background:var(--ink);color:var(--paper);padding:10px 30px;border-radius:50px;border:none;cursor:pointer;font-family:'Noto Sans SC',sans-serif;font-size:.88rem;font-weight:700;transition:all .2s}
+.btn-flip:hover{background:#222;transform:translateY(-2px);box-shadow:0 5px 18px rgba(13,13,13,.22)}
+.completion{display:none;text-align:center;padding:46px 20px}
+.completion.show{display:block;animation:fadeUp .5s ease}
+.completion-emoji{font-size:3rem;margin-bottom:12px}
+.completion-title{font-family:'Playfair Display',serif;font-size:1.9rem;font-weight:900;margin-bottom:8px}
+.completion-sub{color:var(--muted);margin-bottom:22px;font-size:.88rem}
+.cstats{display:flex;gap:14px;justify-content:center;margin-bottom:22px;flex-wrap:wrap}
+.csitem{padding:15px 20px;border-radius:13px;background:var(--card-bg);border:var(--border);min-width:78px}
+.csnum{font-family:'Playfair Display',serif;font-size:1.7rem;font-weight:900}
+.cslabel{font-size:.7rem;color:var(--muted);margin-top:3px}
+.csitem.know .csnum{color:var(--green)}
+.csitem.hard .csnum{color:var(--gold)}
+.csitem.forget .csnum{color:var(--accent)}
+.cta-row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.quiz-q{background:var(--card-bg);border:var(--border);border-radius:20px;padding:30px;margin-bottom:14px;box-shadow:var(--shadow);text-align:center}
+.quiz-prompt{font-family:'DM Mono',monospace;font-size:.68rem;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-bottom:12px}
+.quiz-word{font-family:'Playfair Display',serif;font-size:clamp(1.8rem,5vw,3rem);font-weight:900;cursor:pointer;transition:color .15s}
+.quiz-word:hover{color:var(--accent)}
+.quiz-opts{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.qopt{background:var(--card-bg);border:1.5px solid rgba(13,13,13,.12);border-radius:12px;padding:12px 15px;font-family:'Noto Sans SC',sans-serif;font-size:.88rem;cursor:pointer;text-align:left;transition:all .18s;display:flex;align-items:center;gap:10px}
+.qopt:hover:not(.disabled){border-color:var(--ink);transform:translateY(-2px);box-shadow:var(--shadow)}
+.qopt.correct{background:rgba(45,106,79,.1);border-color:var(--green);color:var(--green)}
+.qopt.wrong{background:rgba(200,75,47,.08);border-color:var(--accent);color:var(--accent)}
+.qopt.disabled{cursor:default}
+.opt-ltr{width:24px;height:24px;border-radius:6px;background:rgba(13,13,13,.06);display:flex;align-items:center;justify-content:center;font-family:'DM Mono',monospace;font-size:.74rem;flex-shrink:0}
+.qopt.correct .opt-ltr{background:var(--green);color:#fff}
+.qopt.wrong .opt-ltr{background:var(--accent);color:#fff}
+.quiz-res{text-align:center;padding:11px;font-size:.9rem;font-weight:700;border-radius:12px;margin-top:12px;display:none}
+.quiz-res.show{display:block}
+.quiz-res.ok{background:rgba(45,106,79,.1);color:var(--green)}
+.quiz-res.no{background:rgba(200,75,47,.08);color:var(--accent)}
+.wgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(208px,1fr));gap:10px}
+.witem{background:var(--card-bg);border:var(--border);border-radius:12px;padding:12px 15px;display:flex;justify-content:space-between;align-items:flex-start;transition:all .18s}
+.witem:hover{transform:translateY(-2px);box-shadow:var(--shadow)}
+.witem.know{border-left:3px solid var(--green)}
+.witem.hard{border-left:3px solid var(--gold)}
+.witem.forget{border-left:3px solid var(--accent)}
+.wi-word{font-family:'Playfair Display',serif;font-size:1rem;font-weight:700;cursor:pointer}
+.wi-word:hover{color:var(--accent)}
+.wi-ph{font-family:'DM Mono',monospace;font-size:.67rem;color:var(--accent);margin-top:2px}
+.wi-mn{font-size:.77rem;color:var(--muted);margin-top:3px}
+.wi-right{display:flex;flex-direction:column;align-items:center;gap:7px;padding-top:2px}
+.wi-dot{width:7px;height:7px;border-radius:50%;background:rgba(13,13,13,.14);flex-shrink:0}
+.wi-dot.know{background:var(--green)}
+.wi-dot.hard{background:var(--gold)}
+.wi-dot.forget{background:var(--accent)}
+.wi-speak{font-size:.82rem;cursor:pointer;color:var(--muted);border:none;background:none;padding:0;line-height:1;transition:color .15s}
+.wi-speak:hover{color:var(--blue)}
+.wi-fav{font-size:.82rem;cursor:pointer;color:rgba(13,13,13,.2);line-height:1;transition:color .15s}
+.wi-fav:hover,.wi-fav.active{color:var(--fav)}
+.flashcard-panel,.quiz-panel,.word-list,.fav-panel{display:none}
+.flashcard-panel.active,.quiz-panel.active,.word-list.active,.fav-panel.active{display:block}
+.stitle{font-family:'Playfair Display',serif;font-size:1.08rem;font-weight:700;margin-bottom:14px;display:flex;align-items:center;gap:10px}
+.sbadge{font-family:'DM Mono',monospace;font-size:.66rem;background:rgba(13,13,13,.09);padding:2px 9px;border-radius:50px;font-weight:400}
+.sbadge.ac{background:var(--accent);color:#fff}
+.empty-state{text-align:center;padding:52px 20px;background:var(--card-bg);border:var(--border);border-radius:20px;border-style:dashed}
+.empty-icon{font-size:2.8rem;margin-bottom:12px}
+.empty-title{font-family:'Playfair Display',serif;font-size:1.25rem;font-weight:700;margin-bottom:6px}
+.empty-sub{color:var(--muted);font-size:.84rem;line-height:1.6}
+.fav-empty{text-align:center;padding:48px 20px;color:var(--muted)}
+.fav-empty-icon{font-size:2.8rem;margin-bottom:12px}
+.loading-overlay{display:none;position:fixed;inset:0;background:rgba(245,240,232,.9);backdrop-filter:blur(10px);z-index:200;flex-direction:column;align-items:center;justify-content:center;gap:18px}
+.loading-overlay.show{display:flex}
+.loading-title{font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:900}
+.loading-sub{color:var(--muted);font-size:.85rem}
+.ldots span{display:inline-block;width:10px;height:10px;border-radius:50%;margin:0 4px;animation:bounce 1.2s ease-in-out infinite}
+.ldots span:nth-child(1){background:var(--accent)}
+.ldots span:nth-child(2){background:var(--gold);animation-delay:.2s}
+.ldots span:nth-child(3){background:var(--green);animation-delay:.4s}
+@keyframes bounce{0%,80%,100%{transform:scale(.6);opacity:.4}40%{transform:scale(1);opacity:1}}
+.toast{position:fixed;bottom:26px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--ink);color:var(--paper);padding:10px 22px;border-radius:50px;font-size:.83rem;font-weight:500;transition:transform .3s ease;z-index:9998;white-space:nowrap;max-width:92vw;text-align:center}
+.toast.show{transform:translateX(-50%) translateY(0)}
+.deco{position:fixed;pointer-events:none;z-index:0;font-family:'Playfair Display',serif;font-size:16vw;font-weight:900;color:rgba(13,13,13,.022);line-height:1;user-select:none}
+.deco1{top:8%;left:-3%}.deco2{bottom:12%;right:-3%}
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+@media(max-width:600px){header{padding:12px 16px}.container{padding:18px 14px}.quiz-opts{grid-template-columns:1fr}.level-btn{min-width:72px;padding:8px 12px}}
+</style>
 </head>
 <body>
-
-    <div class="container">
-        <div class="header-panel">
-            <div class="brand-title">闪卡词汇 ✨</div>
-            <div class="select-wrapper">
-                <select id="levelSelect">
-                    <option value="primary">🎒 小学生</option>
-                    <option value="junior">🏫 初中生</option>
-                    <option value="senior">🎓 高中生</option>
-                    <option value="cet4">📘 英语四级</option>
-                    <option value="cet6">📕 英语六级</option>
-                    <option value="fav">⭐ 我的收藏</option>
-                </select>
-            </div>
+<div class="deco deco1">W</div>
+<div class="deco deco2">✦</div>
+ 
+<div class="loading-overlay" id="loadingOverlay">
+  <div class="ldots"><span></span><span></span><span></span></div>
+  <div class="loading-title">AI 正在生成单词…</div>
+  <div class="loading-sub" id="loadingMsg">请稍候</div>
+</div>
+ 
+<header>
+  <div class="logo">Word<span>Forge</span><sub>Pro</sub></div>
+  <div class="header-right">
+    <div class="hstat"><span class="hstat-num" id="hTotal">0</span><span>单词</span></div>
+    <div class="hstat"><span class="hstat-num" id="hKnown" style="color:var(--green)">0</span><span>掌握</span></div>
+    <div class="hstat"><span class="hstat-num" id="hFav" style="color:var(--fav)">0</span><span>收藏</span></div>
+    <button class="btn-fav-tab" id="favTabBtn" onclick="toggleFavPanel()">♥ 收藏夹</button>
+  </div>
+</header>
+ 
+<div class="container">
+ 
+<div class="level-section">
+  <div class="section-label">选择学习阶段</div>
+  <div class="level-grid">
+    <button class="level-btn" data-lv="elementary" onclick="selectLevel(this,'elementary','小学','小学生','grade 1-6 basic English simple common words animals colors numbers family food')">
+      <span class="lv-icon">🌱</span><span class="lv-name">小学</span><span class="lv-desc">基础词汇</span>
+    </button>
+    <button class="level-btn" data-lv="middle" onclick="selectLevel(this,'middle','初中','初中生','middle school junior high English everyday life academic')">
+      <span class="lv-icon">📖</span><span class="lv-name">初中</span><span class="lv-desc">新目标词汇</span>
+    </button>
+    <button class="level-btn active" data-lv="high" onclick="selectLevel(this,'high','高中','高中生','high school senior Chinese gaokao English academic')">
+      <span class="lv-icon">🎓</span><span class="lv-name">高中</span><span class="lv-desc">高考词汇</span>
+    </button>
+    <button class="level-btn" data-lv="cet4" onclick="selectLevel(this,'cet4','四级','大学英语四级','CET-4 college English test band 4 vocabulary')">
+      <span class="lv-icon">🏅</span><span class="lv-name">四级</span><span class="lv-desc">CET-4</span>
+    </button>
+    <button class="level-btn" data-lv="cet6" onclick="selectLevel(this,'cet6','六级','大学英语六级','CET-6 college English test band 6 advanced')">
+      <span class="lv-icon">🏆</span><span class="lv-name">六级</span><span class="lv-desc">CET-6</span>
+    </button>
+  </div>
+</div>
+ 
+<div class="section-label">选择话题</div>
+<div class="topic-row" id="topicRow"></div>
+ 
+<div class="gen-bar">
+  <label>每批生成</label>
+  <input type="number" class="input-count" id="genCount" value="10" min="5" max="30">
+  <label>个单词</label>
+  <button class="btn-gen" id="genBtn" onclick="generateWords()"><span id="genIcon">✨</span> AI 生成</button>
+  <button class="btn-clear" onclick="clearWords()">清空</button>
+</div>
+ 
+<div class="mode-tabs" id="modeTabs" style="display:none">
+  <button class="mode-tab active" onclick="switchMode('flashcard')">📇 闪卡</button>
+  <button class="mode-tab" onclick="switchMode('quiz')">🎯 测试</button>
+  <button class="mode-tab" onclick="switchMode('wordlist')">📚 列表</button>
+</div>
+ 
+<div class="empty-state" id="emptyState">
+  <div class="empty-icon">🤖</div>
+  <div class="empty-title">选择阶段和话题，点击生成</div>
+  <div class="empty-sub">AI 根据学习阶段生成适配词汇<br>含音标、释义、例句、记忆技巧，支持朗读与收藏</div>
+</div>
+ 
+<!-- Flashcard Panel -->
+<div class="flashcard-panel" id="flashcardPanel">
+  <div class="progress-wrap">
+    <div class="progress-bar"><div class="progress-fill" id="pFill" style="width:0%"></div></div>
+    <span class="progress-text" id="pText">0 / 0</span>
+  </div>
+  <div class="card-wrap" id="cardWrap">
+    <div class="flash-card" id="flashCard">
+      <div class="card-face card-front">
+        <div class="card-top-actions">
+          <button class="icon-btn" id="speakBtn" title="朗读 (R)" onclick="speakCurrent()">🔊</button>
+          <button class="icon-btn" id="favBtn" title="收藏 (F)" onclick="toggleFav()">♡</button>
         </div>
-
-        <div class="card-stage" id="cardStage">
-            <div class="card" id="vocabularyCard">
-                <div class="card-face card-front">
-                    <div class="card-header">
-                        <span class="index-indicator" id="indexIndicator">0 / 0</span>
-                        <div style="display: flex; gap: 8px;">
-                            <button class="action-icon-btn" id="audioBtn" title="朗读">
-                                <svg class="icon" viewBox="0 0 24 24"><path d="M11 5L6 9H2v6h4l5 4V5z"></path><path d="M15.54 8.46a5 5 0 0 1 0 7.07" stroke-width="1.5"></path><path d="M19.07 4.93a10 10 0 0 1 0 14.14" stroke-width="1.5"></path></svg>
-                            </button>
-                            <button class="action-icon-btn" id="favBtn" title="收藏">
-                                <svg class="icon icon-star" id="starIcon" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
-                            </button>
-                        </div>
-                    </div>
-                    <div class="word-body">
-                        <div class="word-text" id="wordText">Loading</div>
-                        <div class="word-phonetic" id="wordPhonetic">/--/</div>
-                    </div>
-                    <div class="card-footer-tip">💡 点击卡片翻转查看中文释义</div>
-                </div>
-
-                <div class="card-face card-back">
-                    <div class="translation-title">释义与例句</div>
-                    <div class="translation-body">
-                        <div class="word-trans" id="wordTrans">加载中...</div>
-                        <div class="word-example" id="wordExample">Loading example sentence.</div>
-                    </div>
-                    <div class="card-footer-tip">💡 点击卡片返回正面</div>
-                </div>
-            </div>
-        </div>
-
-        <div class="control-panel">
-            <button class="btn" id="prevBtn">
-                <svg class="icon" viewBox="0 0 24 24"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
-                上一个
-            </button>
-            <button class="btn btn-primary" id="nextBtn">
-                下一个
-                <svg class="icon" viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
-            </button>
-        </div>
+        <div class="card-label">点击单词朗读 · 点击卡片翻转</div>
+        <div class="card-word" id="cardWord" onclick="speakCurrent()">—</div>
+        <div class="card-phonetic" id="cardPhonetic"></div>
+        <div class="card-hint" id="cardHint"></div>
+        <div class="flip-hint">↩ 点击翻转</div>
+      </div>
+      <div class="card-face card-back" onclick="flipCard()">
+        <div class="card-label">释义 &amp; 例句</div>
+        <div class="card-translation" id="cardTranslation"></div>
+        <div class="card-example" id="cardExample"></div>
+      </div>
     </div>
-
-    <script>
-        // 1. 扩充的内置单词库（每个级别提供一些演示单词）
-        const dictionary = {
-            primary: [
-                { word: "apple", phonetic: "[ˈæpl]", trans: "n. 苹果", example: "I eat an apple every morning." },
-                { word: "banana", phonetic: "[bəˈnɑːnə]", trans: "n. 香蕉", example: "Bananas are rich in potassium." },
-                { word: "cat", phonetic: "[kæt]", trans: "n. 猫", example: "The cat is sleeping on the sofa." },
-                { word: "dog", phonetic: "[dɒɡ]", trans: "n. 狗", example: "A dog is a man's best friend." }
-            ],
-            junior: [
-                { word: "beautiful", phonetic: "[ˈbjuːtɪfl]", trans: "adj. 美丽的，漂亮的", example: "What a beautiful sunset!" },
-                { word: "determine", phonetic: "[dɪˈtɜːmɪn]", trans: "v. 决定；下决心", example: "She determined to study harder." },
-                { word: "exercise", phonetic: "[ˈeksəsaɪz]", trans: "n./v. 锻炼；练习", example: "Swimming is excellent exercise." }
-            ],
-            senior: [
-                { word: "abandon", phonetic: "[əˈbændən]", trans: "vt. 放弃，抛弃", example: "Never abandon your dreams." },
-                { word: "brilliant", phonetic: "[ˈbrɪliənt]", trans: "adj. 极好的；聪明的", example: "He came up with a brilliant idea." },
-                { word: "challenge", phonetic: "[ˈtʃælɪndʒ]", trans: "n./v. 挑战", example: "We must face the challenge bravely." }
-            ],
-            cet4: [
-                { word: "emphasize", phonetic: "[ˈemfəsaɪz]", trans: "vt. 强调，着重", example: "My teacher emphasized the importance of grammar." },
-                { word: "negotiate", phonetic: "[nɪˈɡəʊʃieɪt]", trans: "v. 谈判，协商", example: "They managed to negotiate a new contract." },
-                { word: "standard", phonetic: "[ˈstændəd]", trans: "n. 标准 adj. 标准的", example: "This product meets international standards." }
-            ],
-            cet6: [
-                { word: "ambiguous", phonetic: "[æmˈbɪɡjuəs]", trans: "adj. 模棱两可的，模糊的", example: "His reply was ambiguous and unclear." },
-                { word: "scrutineer", phonetic: "[ˌskruːtəˈnɪə(r)]", trans: "n. 监票人；审查员", example: "The scrutineers are counting the votes." },
-                { word: "aggregate", phonetic: "[ˈæɡrɪɡət]", trans: "n. 总数 v. 总计", example: "The aggregate score was 4-3." }
-            ]
-        };
-
-        // 2. 核心状态管理变量
-        let currentLevel = 'primary'; 
-        let currentIndex = 0;
-        let currentWords = [...dictionary[currentLevel]]; 
-        let favorites = JSON.parse(localStorage.getItem('word_favorites')) || [];
-
-        // 3. DOM 节点获取
-        const levelSelect = document.getElementById('levelSelect');
-        const cardStage = document.getElementById('cardStage');
-        const vocabularyCard = document.getElementById('vocabularyCard');
-        const wordText = document.getElementById('wordText');
-        const wordPhonetic = document.getElementById('wordPhonetic');
-        const wordTrans = document.getElementById('wordTrans');
-        const wordExample = document.getElementById('wordExample');
-        const indexIndicator = document.getElementById('indexIndicator');
-        const starIcon = document.getElementById('starIcon');
-        
-        const audioBtn = document.getElementById('audioBtn');
-        const favBtn = document.getElementById('favBtn');
-        const prevBtn = document.getElementById('prevBtn');
-        const nextBtn = document.getElementById('nextBtn');
-
-        // 4. 初始化应用
-        function init() {
-            updateWordList();
-            renderCard();
-            
-            // 绑定事件
-            levelSelect.addEventListener('change', handleLevelChange);
-            cardStage.addEventListener('click', toggleFlip);
-            prevBtn.addEventListener('click', (e) => { e.stopPropagation(); moveCard(-1); });
-            nextBtn.addEventListener('click', (e) => { e.stopPropagation(); moveCard(1); });
-            audioBtn.addEventListener('click', (e) => { e.stopPropagation(); speakWord(); });
-            favBtn.addEventListener('click', (e) => { e.stopPropagation(); toggleFavorite(); });
-        }
-
-        // 5. 更新当前的单词数据流
-        function updateWordList() {
-            currentLevel = levelSelect.value;
-            if (currentLevel === 'fav') {
-                currentWords = favorites;
-            } else {
-                currentWords = [...dictionary[currentLevel]];
-            }
-            currentIndex = 0;
-        }
-
-        // 6. 渲染单词卡片内容与状态
-        function renderCard() {
-            // 首先将卡片恢复到正面
-            vocabularyCard.classList.remove('is-flipped');
-
-            // 如果当前词库为空（特别是“我的收藏”清空时）
-            if (currentWords.length === 0) {
-                wordText.innerText = "空空如也";
-                wordPhonetic.innerText = "/--/";
-                wordTrans.innerText = "还没有收藏任何单词哦";
-                wordExample.innerText = "在其他级别点击右上角的星星即可收藏。";
-                indexIndicator.innerText = "0 / 0";
-                starIcon.classList.remove('is-active');
-                return;
-            }
-
-            const currentData = currentWords[currentIndex];
-            
-            // 延时一点点填入数据，防止翻转过程中穿帮
-            setTimeout(() => {
-                wordText.innerText = currentData.word;
-                wordPhonetic.innerText = currentData.phonetic;
-                wordTrans.innerText = currentData.trans;
-                wordExample.innerText = currentData.example || "";
-                indexIndicator.innerText = `${currentIndex + 1} / ${currentWords.length}`;
-            }, 150);
-
-            // 检查当前单词是否处于收藏状态
-            const isFav = favorites.some(item => item.word === currentData.word);
-            if (isFav) {
-                starIcon.classList.add('is-active');
-            } else {
-                starIcon.classList.remove('is-active');
-            }
-        }
-
-        // 7. 功能：卡片正反面翻转
-        function toggleFlip() {
-            if (currentWords.length === 0) return;
-            vocabularyCard.classList.toggle('is-flipped');
-        }
-
-        // 8. 功能：上一个/下一个 单词切换
-        function moveCard(step) {
-            if (currentWords.length <= 1) return;
-            currentIndex += step;
-            
-            // 循环轮播逻辑
-            if (currentIndex < 0) {
-                currentIndex = currentWords.length - 1;
-            } else if (currentIndex >= currentWords.length) {
-                currentIndex = 0;
-            }
-            renderCard();
-        }
-
-        // 9. 功能：切换级别/学段
-        function handleLevelChange() {
-            updateWordList();
-            renderCard();
-        }
-
-        // 10. 功能：Web Speech API 核心语音发音
-        function speakWord() {
-            if (currentWords.length === 0) return;
-            const textToSpeak = currentWords[currentIndex].word;
-            
-            // 实例化发音对象
-            const utterance = new SpeechSynthesisUtterance(textToSpeak);
-            utterance.lang = 'en-US'; // 设置为美式英语
-            utterance.rate = 0.85;    // 语速稍慢，方便学习
-
-            // 先停止当前可能正在朗读的语音，再播放新的
-            window.speechSynthesis.cancel();
-            window.speechSynthesis.speak(utterance);
-        }
-
-        // 11. 功能：添加/取消 收藏（持久化存储到本地）
-        function toggleFavorite() {
-            if (currentWords.length === 0) return;
-            const currentData = currentWords[currentIndex];
-            const foundIndex = favorites.findIndex(item => item.word === currentData.word);
-
-            if (foundIndex > -1) {
-                // 如果已经收藏了，那就移除它
-                favorites.splice(foundIndex, 1);
-                starIcon.classList.remove('is-active');
-            } else {
-                // 如果没收藏，加进去
-                favorites.push(currentData);
-                starIcon.classList.add('is-active');
-            }
-
-            // 同步回本地磁盘
-            localStorage.setItem('word_favorites', JSON.stringify(favorites));
-
-            // 特殊处理：如果用户正在“我的收藏”分类下进行取消收藏，需要刷新列表
-            if (currentLevel === 'fav') {
-                currentWords = favorites;
-                if (currentIndex >= currentWords.length && currentIndex > 0) {
-                    currentIndex--;
-                }
-                renderCard();
-            }
-        }
-
-        // 执行初始化
-        init();
-    </script>
+  </div>
+  <div class="rating-row" id="ratingRow" style="display:none">
+    <button class="btn-rate forget" onclick="rateCard('forget')">😰 不认识</button>
+    <button class="btn-rate hard" onclick="rateCard('hard')">🤔 模糊</button>
+    <button class="btn-rate know" onclick="rateCard('know')">✅ 已掌握</button>
+  </div>
+  <div class="rating-row" id="flipRow">
+    <button class="btn-flip" onclick="flipCard()">翻转查看 →</button>
+  </div>
+  <div class="completion" id="completionScreen">
+    <div class="completion-emoji">🎉</div>
+    <div class="completion-title">本轮完成！</div>
+    <div class="completion-sub">继续生成更多单词，或再来一遍</div>
+    <div class="cstats">
+      <div class="csitem know"><div class="csnum" id="fKnown">0</div><div class="cslabel">已掌握</div></div>
+      <div class="csitem hard"><div class="csnum" id="fHard">0</div><div class="cslabel">模糊</div></div>
+      <div class="csitem forget"><div class="csnum" id="fForget">0</div><div class="cslabel">待记</div></div>
+    </div>
+    <div class="cta-row">
+      <button class="btn-flip" onclick="restartDeck()">🔄 再来一遍</button>
+      <button class="btn-clear" style="padding:10px 20px;border-radius:50px;cursor:pointer" onclick="generateWords()">✨ 新一批</button>
+    </div>
+  </div>
+</div>
+ 
+<!-- Quiz Panel -->
+<div class="quiz-panel" id="quizPanel">
+  <div class="stitle">选择测试 <span class="sbadge ac" id="quizBadge">0/0</span></div>
+  <div class="progress-wrap">
+    <div class="progress-bar"><div class="progress-fill" id="qFill" style="width:0%"></div></div>
+    <span class="progress-text" id="qText">0 / 0</span>
+  </div>
+  <div class="quiz-q">
+    <div class="quiz-prompt">点击单词朗读 · 选出正确的中文释义</div>
+    <div class="quiz-word" id="quizWord" onclick="speakStr(currentQuizWord())">—</div>
+  </div>
+  <div class="quiz-opts" id="quizOpts"></div>
+  <div class="quiz-res" id="quizRes"></div>
+  <div style="text-align:center;margin-top:14px;display:none" id="qNextWrap">
+    <button class="btn-flip" onclick="nextQuiz()">下一题 →</button>
+  </div>
+</div>
+ 
+<!-- Word List Panel -->
+<div class="word-list" id="wordlistPanel">
+  <div class="stitle">全部单词 <span class="sbadge" id="listBadge">0 词</span></div>
+  <div class="wgrid" id="wordGrid"></div>
+</div>
+ 
+<!-- Favorites Panel -->
+<div class="fav-panel" id="favPanel">
+  <div class="stitle">♥ 收藏夹 <span class="sbadge" id="favBadge">0 词</span></div>
+  <div id="favContent"></div>
+</div>
+ 
+</div>
+<div class="toast" id="toast"></div>
+ 
+<script>
+// ── State ──
+let WORDS = [], wordStatus = {}, favorites = new Set(), usedWords = new Set();
+let deck = [], deckIdx = 0, isFlipped = false;
+let quizWords = [], quizIdx = 0, quizAnswered = false;
+let currentLevel = 'high', currentLevelLabel = '高中', currentLevelHint = 'high school senior Chinese gaokao English academic';
+ 
+const TOPICS = {
+  elementary:['动物','颜色','数字','家庭','食物','学校','天气','玩具','身体','交通'],
+  middle:['日常生活','学校生活','运动健身','旅行出行','节日文化','科技数码','自然环境','朋友友谊','购物消费','职业梦想'],
+  high:['教育学习','社会热点','科技创新','环境保护','健康医疗','经济贸易','文化艺术','心理情感','城市发展','体育竞技'],
+  cet4:['日常生活','学术教育','科技网络','自然环境','社会经济','健康医疗','文化艺术','高频核心词'],
+  cet6:['政治外交','经济金融','科技前沿','医学健康','法律社会','人文历史','环境生态','高频核心词'],
+};
+const DIFF = {
+  elementary:'极简单，小学生能理解，词义直白，例句短且简单（10词以内）',
+  middle:'简单至中等，初中生水平，贴近日常，例句口语化自然',
+  high:'中等难度，高考常考词，语境明确，例句学术感适中',
+  cet4:'中等偏难，四级核心词，例句正式，词义准确全面',
+  cet6:'较难，六级词汇，偏学术正式场合，例句地道精准',
+};
+ 
+let selectedTopic = '';
+ 
+function init() { renderTopics(); }
+ 
+function renderTopics() {
+  const list = TOPICS[currentLevel]||[];
+  const row = document.getElementById('topicRow');
+  row.innerHTML = '';
+  selectedTopic = list[0]||'';
+  list.forEach((t,i)=>{
+    const b = document.createElement('button');
+    b.className='topic-chip'+(i===0?' active':'');
+    b.textContent = t;
+    b.onclick=()=>{ document.querySelectorAll('.topic-chip').forEach(x=>x.classList.remove('active')); b.classList.add('active'); selectedTopic=t; };
+    row.appendChild(b);
+  });
+}
+ 
+function selectLevel(btn,lv,label,desc,hint) {
+  document.querySelectorAll('.level-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  currentLevel=lv; currentLevelLabel=label; currentLevelHint=hint;
+  renderTopics();
+}
+ 
+// ── AI Generate ──
+async function generateWords() {
+  const count = Math.min(30,Math.max(5,parseInt(document.getElementById('genCount').value)||10));
+  const btn=document.getElementById('genBtn'), icon=document.getElementById('genIcon');
+  btn.disabled=true; icon.textContent='⏳';
+  showLoading(`正在生成「${currentLevelLabel}·${selectedTopic}」词汇…`);
+ 
+  const used = [...usedWords].slice(-80).join(', ');
+  const prompt = `你是专业英语词汇教师，为中国${currentLevelLabel}学生设计词汇卡片。
+ 
+请生成 ${count} 个与话题「${selectedTopic}」相关的英语单词。
+难度要求：${DIFF[currentLevel]}
+${used?'不要重复以下单词：'+used:''}
+ 
+只返回 JSON 数组，不含任何 markdown、代码块或解释。
+example 字段中用 [[word]] 标记目标单词（不要用 HTML 标签）：
+[{"word":"英语单词","phonetic":"/音标/","meaning":"词性. 中文释义","example":"例句中 [[目标单词]] 这样标记","hint":"10-15字记忆技巧"}]`;
+ 
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:4000,messages:[{role:'user',content:prompt}]})
+    });
+    const data = await res.json();
+    const raw  = data.content.map(c=>c.text||'').join('');
+ 
+    // Robust parsing: strip markdown fences, find JSON array
+    let cleaned = raw.replace(/```json|```/gi,'').trim();
+    // Extract first [...] block in case there's extra text
+    const arrMatch = cleaned.match(/\[[\s\S]*\]/);
+    if(!arrMatch) throw new Error('No JSON array found in response');
+    cleaned = arrMatch[0];
+ 
+    const newWords = JSON.parse(cleaned);
+    // Convert [[word]] marker to <em> tag safely
+    newWords.forEach(w=>{
+      if(w.example) w.example = w.example.replace(/\[\[([^\]]+)\]\]/g,'<em>$1</em>');
+      if(!usedWords.has(w.word)){ WORDS.push(w); wordStatus[w.word]=null; usedWords.add(w.word); }
+    });
+    updateStats(); buildWordGrid(); resetDeck(); hideLoading();
+    showToast(`✨ 已生成 ${newWords.length} 个${currentLevelLabel}单词！`);
+    document.getElementById('emptyState').style.display='none';
+    document.getElementById('modeTabs').style.display='flex';
+    switchMode('flashcard');
+  } catch(e){
+    hideLoading();
+    console.error('Parse error:', e);
+    showToast('❌ 生成失败，请重试');
+  }
+  btn.disabled=false; icon.textContent='✨';
+}
+ 
+// ── TTS ──
+function speakStr(word) {
+  if(!word||word==='—') return;
+  window.speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(word);
+  u.lang='en-US'; u.rate=0.85;
+  const voices = window.speechSynthesis.getVoices();
+  const v = voices.find(v=>v.lang.startsWith('en-'));
+  if(v) u.voice=v;
+  const btn = document.getElementById('speakBtn');
+  if(btn){ btn.classList.add('speaking'); u.onend=()=>btn.classList.remove('speaking'); }
+  window.speechSynthesis.speak(u);
+}
+function speakCurrent(){ speakStr(deck[deckIdx]?.word); }
+function currentQuizWord(){ return quizWords[quizIdx]?.word; }
+ 
+// ── Favorites ──
+function toggleFav() {
+  const w = deck[deckIdx]; if(!w) return;
+  if(favorites.has(w.word)){ favorites.delete(w.word); showToast('💔 已取消收藏'); }
+  else { favorites.add(w.word); showToast('♥ 已加入收藏！'); }
+  refreshFavBtn(); updateStats(); buildWordGrid(); buildFavPanel();
+}
+function toggleFavWord(word) {
+  if(favorites.has(word)){ favorites.delete(word); showToast('💔 已取消收藏'); }
+  else { favorites.add(word); showToast('♥ 已加入收藏！'); }
+  updateStats(); buildWordGrid(); buildFavPanel();
+}
+function refreshFavBtn() {
+  const w = deck[deckIdx]; if(!w) return;
+  const btn = document.getElementById('favBtn');
+  if(!btn) return;
+  const on = favorites.has(w.word);
+  btn.textContent = on ? '♥' : '♡';
+  btn.classList.toggle('fav-on', on);
+}
+function toggleFavPanel() {
+  const panel = document.getElementById('favPanel');
+  const btn   = document.getElementById('favTabBtn');
+  if(panel.classList.contains('active')){
+    panel.classList.remove('active'); btn.classList.remove('active');
+    if(WORDS.length){ document.getElementById('modeTabs').style.display='flex'; switchMode('flashcard'); }
+  } else {
+    ['flashcardPanel','quizPanel','wordlistPanel'].forEach(id=>document.getElementById(id).classList.remove('active'));
+    document.getElementById('modeTabs').style.display='none';
+    panel.classList.add('active'); btn.classList.add('active'); buildFavPanel();
+  }
+}
+function buildFavPanel() {
+  const favWords = WORDS.filter(w=>favorites.has(w.word));
+  document.getElementById('favBadge').textContent = favWords.length+' 词';
+  document.getElementById('hFav').textContent = favorites.size;
+  const cont = document.getElementById('favContent');
+  if(!favWords.length){
+    cont.innerHTML='<div class="fav-empty"><div class="fav-empty-icon">♡</div><div>还没有收藏，点击单词卡片上的 ♡ 即可收藏</div></div>';
+    return;
+  }
+  const grid = document.createElement('div'); grid.className='wgrid';
+  favWords.forEach(w=>grid.appendChild(makeWordItem(w)));
+  cont.innerHTML=''; cont.appendChild(grid);
+}
+ 
+// ── Flashcard ──
+function shuffle(arr){ const a=[...arr]; for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a; }
+ 
+function resetDeck() {
+  deck=shuffle(WORDS); deckIdx=0;
+  document.getElementById('completionScreen').classList.remove('show');
+  document.getElementById('cardWrap').style.display='block';
+  document.getElementById('flipRow').style.display='flex';
+  document.getElementById('ratingRow').style.display='none';
+  showCard();
+}
+function showCard() {
+  if(!WORDS.length) return;
+  if(deckIdx>=deck.length){ showCompletion(); return; }
+  const w=deck[deckIdx];
+  isFlipped=false;
+  const card=document.getElementById('flashCard');
+  card.classList.remove('flipped');
+  card.style.animation='fadeUp .3s ease both';
+  setTimeout(()=>card.style.animation='',360);
+  document.getElementById('cardWord').textContent=w.word;
+  document.getElementById('cardPhonetic').textContent=w.phonetic;
+  document.getElementById('cardHint').textContent='💡 '+w.hint;
+  document.getElementById('cardTranslation').textContent=w.meaning;
+  document.getElementById('cardExample').innerHTML=w.example;
+  document.getElementById('ratingRow').style.display='none';
+  document.getElementById('flipRow').style.display='flex';
+  document.getElementById('completionScreen').classList.remove('show');
+  document.getElementById('cardWrap').style.display='block';
+  const pct=Math.round(deckIdx/deck.length*100);
+  document.getElementById('pFill').style.width=pct+'%';
+  document.getElementById('pText').textContent=deckIdx+' / '+deck.length;
+  refreshFavBtn();
+}
+function flipCard() {
+  isFlipped=!isFlipped;
+  document.getElementById('flashCard').classList.toggle('flipped',isFlipped);
+  if(isFlipped){ document.getElementById('ratingRow').style.display='flex'; document.getElementById('flipRow').style.display='none'; }
+}
+function rateCard(r) {
+  const w=deck[deckIdx]; wordStatus[w.word]=r; updateStats();
+  showToast({know:'✅ 太棒了！',hard:'🤔 继续加油！',forget:'📝 已标记复习'}[r]);
+  deckIdx++; updateWordGrid(); setTimeout(showCard,260);
+}
+function showCompletion() {
+  document.getElementById('cardWrap').style.display='none';
+  document.getElementById('flipRow').style.display='none';
+  document.getElementById('ratingRow').style.display='none';
+  document.getElementById('fKnown').textContent=Object.values(wordStatus).filter(s=>s==='know').length;
+  document.getElementById('fHard').textContent=Object.values(wordStatus).filter(s=>s==='hard').length;
+  document.getElementById('fForget').textContent=Object.values(wordStatus).filter(s=>s==='forget').length;
+  document.getElementById('completionScreen').classList.add('show');
+  document.getElementById('pFill').style.width='100%';
+  document.getElementById('pText').textContent=deck.length+' / '+deck.length;
+}
+function restartDeck() {
+  deck=shuffle(WORDS); deckIdx=0;
+  document.getElementById('completionScreen').classList.remove('show');
+  document.getElementById('cardWrap').style.display='block';
+  document.getElementById('flipRow').style.display='flex';
+  showCard();
+}
+ 
+// ── Quiz ──
+function initQuiz() {
+  if(WORDS.length<4){ showToast('至少需要 4 个单词才能测试'); return; }
+  quizWords=shuffle(WORDS); quizIdx=0; showQuiz();
+}
+function showQuiz() {
+  if(quizIdx>=quizWords.length){ quizWords=shuffle(WORDS); quizIdx=0; }
+  const w=quizWords[quizIdx]; quizAnswered=false;
+  document.getElementById('quizWord').textContent=w.word;
+  document.getElementById('quizRes').className='quiz-res';
+  document.getElementById('qNextWrap').style.display='none';
+  const wrong=shuffle(WORDS.filter(x=>x.word!==w.word)).slice(0,3);
+  const opts=shuffle([w,...wrong]);
+  const ltrs=['A','B','C','D'];
+  const c=document.getElementById('quizOpts'); c.innerHTML='';
+  opts.forEach((opt,i)=>{
+    const b=document.createElement('button'); b.className='qopt';
+    b.innerHTML=`<span class="opt-ltr">${ltrs[i]}</span>${opt.meaning}`;
+    b.onclick=()=>answerQuiz(b,opt.word===w.word,w.meaning);
+    c.appendChild(b);
+  });
+  const pct=Math.round(quizIdx/quizWords.length*100);
+  document.getElementById('qFill').style.width=pct+'%';
+  document.getElementById('qText').textContent=quizIdx+' / '+quizWords.length;
+  document.getElementById('quizBadge').textContent=quizIdx+'/'+quizWords.length;
+}
+function answerQuiz(btn,ok,correct) {
+  if(quizAnswered) return; quizAnswered=true;
+  document.querySelectorAll('.qopt').forEach(b=>b.classList.add('disabled'));
+  const res=document.getElementById('quizRes');
+  if(ok){ btn.classList.add('correct'); res.textContent='🎉 正确！'; res.className='quiz-res show ok'; }
+  else {
+    btn.classList.add('wrong');
+    document.querySelectorAll('.qopt').forEach(b=>{ if(b.textContent.includes(correct)) b.classList.add('correct'); });
+    res.textContent='❌ 错误，正确：'+correct; res.className='quiz-res show no';
+  }
+  document.getElementById('qNextWrap').style.display='block';
+}
+function nextQuiz(){ quizIdx++; showQuiz(); }
+ 
+// ── Word List ──
+function makeWordItem(w) {
+  const s=wordStatus[w.word], isFav=favorites.has(w.word);
+  const d=document.createElement('div');
+  d.className='witem'+(s?' '+s:''); d.id='wi-'+w.word;
+  d.innerHTML=`
+    <div style="flex:1;min-width:0">
+      <div class="wi-word" onclick="jumpToCard('${w.word}')">${w.word}</div>
+      <div class="wi-ph">${w.phonetic}</div>
+      <div class="wi-mn">${w.meaning}</div>
+    </div>
+    <div class="wi-right">
+      <div class="wi-dot ${s||''}"></div>
+      <button class="wi-speak" title="朗读" onclick="speakStr('${w.word}')">🔊</button>
+      <span class="wi-fav ${isFav?'active':''}" title="收藏" onclick="toggleFavWord('${w.word}')">${isFav?'♥':'♡'}</span>
+    </div>`;
+  return d;
+}
+function buildWordGrid() {
+  const g=document.getElementById('wordGrid'); g.innerHTML='';
+  document.getElementById('listBadge').textContent=WORDS.length+' 词';
+  WORDS.forEach(w=>g.appendChild(makeWordItem(w)));
+}
+function updateWordGrid() {
+  WORDS.forEach(w=>{ const s=wordStatus[w.word]; const el=document.getElementById('wi-'+w.word); if(el) el.className='witem'+(s?' '+s:''); });
+}
+function jumpToCard(word) {
+  const idx=deck.findIndex(w=>w.word===word);
+  if(idx!==-1){ deckIdx=idx; showCard(); switchMode('flashcard'); }
+}
+ 
+// ── Stats ──
+function updateStats() {
+  document.getElementById('hTotal').textContent=WORDS.length;
+  document.getElementById('hKnown').textContent=Object.values(wordStatus).filter(s=>s==='know').length;
+  document.getElementById('hFav').textContent=favorites.size;
+}
+ 
+// ── Clear ──
+function clearWords() {
+  WORDS=[]; wordStatus={}; deck=[]; deckIdx=0; usedWords.clear();
+  updateStats();
+  document.getElementById('emptyState').style.display='block';
+  document.getElementById('modeTabs').style.display='none';
+  ['flashcardPanel','quizPanel','wordlistPanel','favPanel'].forEach(id=>document.getElementById(id).classList.remove('active'));
+  document.getElementById('wordGrid').innerHTML='';
+  document.getElementById('favTabBtn').classList.remove('active');
+  showToast('🗑️ 已清空');
+}
+ 
+// ── Mode Switch ──
+function switchMode(mode) {
+  document.querySelectorAll('.mode-tab').forEach((t,i)=>{ t.classList.toggle('active',['flashcard','quiz','wordlist'][i]===mode); });
+  document.getElementById('flashcardPanel').classList.toggle('active',mode==='flashcard');
+  document.getElementById('quizPanel').classList.toggle('active',mode==='quiz');
+  document.getElementById('wordlistPanel').classList.toggle('active',mode==='wordlist');
+  document.getElementById('favPanel').classList.remove('active');
+  document.getElementById('favTabBtn').classList.remove('active');
+  if(mode==='quiz') initQuiz();
+  if(mode==='wordlist') buildWordGrid();
+}
+ 
+// ── Loading / Toast ──
+function showLoading(msg){ document.getElementById('loadingMsg').textContent=msg; document.getElementById('loadingOverlay').classList.add('show'); }
+function hideLoading(){ document.getElementById('loadingOverlay').classList.remove('show'); }
+function showToast(msg){ const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),2200); }
+ 
+// ── Keyboard ──
+document.addEventListener('keydown',e=>{
+  const fp=document.getElementById('flashcardPanel');
+  if(!fp.classList.contains('active')||!WORDS.length) return;
+  if(e.key===' '||e.key==='ArrowRight'){ e.preventDefault(); flipCard(); }
+  if(e.key==='r'||e.key==='R') speakCurrent();
+  if(e.key==='f'||e.key==='F') toggleFav();
+  if(isFlipped){ if(e.key==='1') rateCard('forget'); if(e.key==='2') rateCard('hard'); if(e.key==='3') rateCard('know'); }
+});
+ 
+window.speechSynthesis.onvoiceschanged=()=>window.speechSynthesis.getVoices();
+init();
+</script>
 </body>
 </html>
