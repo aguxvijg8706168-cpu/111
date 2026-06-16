@@ -1,397 +1,120 @@
 <!DOCTYPE html>
 <html lang="zh">
-
 <head>
 <meta charset="UTF-8">
-<meta name="viewport"
-content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-
-<title>张桂林不要熬夜 ❤</title>
+<title>比分抽奖系统 PRO</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
-
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-}
-
 body{
-    overflow:hidden;
-    background:#000;
-    font-family:"Microsoft YaHei";
+    margin:0;
+    font-family: Arial, sans-serif;
+    background: linear-gradient(135deg,#1e1e2f,#2c3e50);
+    color:white;
+    display:flex;
+    justify-content:center;
+    align-items:center;
     height:100vh;
 }
 
-/* 星空背景 */
-
-canvas{
-    position:fixed;
-    top:0;
-    left:0;
-}
-
-/* 主文字 */
-
-.center{
-    position:absolute;
-    width:100%;
-    top:50%;
-    transform:translateY(-50%);
+.container{
     text-align:center;
-    z-index:10;
 }
 
-.title{
-    font-size:70px;
-    font-weight:bold;
-    color:#ff4fa3;
-
-    text-shadow:
-    0 0 10px #ff4fa3,
-    0 0 20px #ff4fa3,
-    0 0 40px #ff4fa3,
-    0 0 80px #ff4fa3;
-
-    animation: glow 2s infinite alternate;
-}
-
-.sub{
-    margin-top:25px;
+h1{
+    margin-bottom:20px;
     font-size:28px;
-    color:white;
-    letter-spacing:5px;
-
-    animation: float 3s infinite ease-in-out;
 }
 
-/* 底部提示 */
+.box{
+    width:260px;
+    height:120px;
+    background:#111;
+    border-radius:15px;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    font-size:50px;
+    font-weight:bold;
+    color:#00ffcc;
+    margin:20px auto;
+    box-shadow:0 0 20px rgba(0,255,204,0.3);
+}
 
-.tip{
-    position:absolute;
-    bottom:40px;
-    width:100%;
-    text-align:center;
-    color:white;
+button{
+    padding:12px 30px;
     font-size:18px;
-    opacity:0.8;
-    z-index:10;
+    border:none;
+    border-radius:8px;
+    cursor:pointer;
+    background:#00ffcc;
+    color:#000;
+    font-weight:bold;
+    transition:0.2s;
 }
 
-/* AI对话框 */
-
-.ai-box{
-    position:fixed;
-    right:20px;
-    bottom:20px;
-
-    background:rgba(255,255,255,0.1);
-    border:1px solid rgba(255,255,255,0.2);
-
-    backdrop-filter:blur(10px);
-
-    color:white;
-    padding:15px 20px;
-    border-radius:20px;
-
-    z-index:999;
-
-    font-size:16px;
-
-    animation: aiFloat 3s infinite;
+button:hover{
+    transform:scale(1.05);
 }
 
-/* 呼吸动画 */
-
-@keyframes glow{
-
-    from{
-        text-shadow:
-        0 0 10px #ff4fa3,
-        0 0 20px #ff4fa3,
-        0 0 40px #ff4fa3;
-    }
-
-    to{
-        text-shadow:
-        0 0 20px #ff4fa3,
-        0 0 40px #ff4fa3,
-        0 0 80px #ff4fa3,
-        0 0 120px #ff4fa3;
-    }
+.small{
+    margin-top:15px;
+    font-size:12px;
+    opacity:0.6;
 }
-
-@keyframes float{
-
-    0%{
-        transform:translateY(0px);
-    }
-
-    50%{
-        transform:translateY(-10px);
-    }
-
-    100%{
-        transform:translateY(0px);
-    }
-}
-
-@keyframes aiFloat{
-
-    0%{
-        transform:translateY(0px);
-    }
-
-    50%{
-        transform:translateY(-5px);
-    }
-
-    100%{
-        transform:translateY(0px);
-    }
-}
-
-/* 手机适配 */
-
-@media(max-width:768px){
-
-    .title{
-        font-size:42px;
-        padding:0 20px;
-    }
-
-    .sub{
-        font-size:20px;
-    }
-
-    .tip{
-        font-size:14px;
-        bottom:25px;
-    }
-
-    .ai-box{
-        right:10px;
-        bottom:10px;
-        font-size:14px;
-    }
-}
-
 </style>
 </head>
 
 <body>
 
-<canvas id="canvas"></canvas>
+<div class="container">
+    <h1>🎰 比分随机抽奖 PRO</h1>
 
-<div class="center">
+    <div class="box" id="result">--</div>
 
-    <div class="title">
-        张桂林不要熬夜
-    </div>
+    <button onclick="startDraw()">开始抽取</button>
 
-    <div class="sub">
-        ❤ 早点休息 晚安比熬夜更浪漫 ❤
-    </div>
-
+    <div class="small">等概率随机 · GitHub Pages 可部署</div>
 </div>
-
-<div class="tip">
-    点击屏幕有惊喜 ✨
-</div>
-
-<div class="ai-box" id="aiBox">
-    ❤ AI提醒：该睡觉啦
-</div>
-
-<!-- 背景音乐 -->
-<audio id="bgm" loop>
-<source src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_c8f4e3c7cf.mp3?filename=beautiful-relaxing-music-117084.mp3">
-</audio>
 
 <script>
 
-const canvas = document.getElementById("canvas");
-const ctx = canvas.getContext("2d");
-
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
-
-/* 星空粒子 */
-
-let stars = [];
-
-for(let i=0;i<250;i++){
-
-    stars.push({
-
-        x:Math.random()*canvas.width,
-        y:Math.random()*canvas.height,
-        r:Math.random()*2,
-        d:Math.random()*1
-    });
-}
-
-function drawStars(){
-
-    ctx.clearRect(0,0,canvas.width,canvas.height);
-
-    ctx.fillStyle="white";
-
-    for(let s of stars){
-
-        ctx.beginPath();
-
-        ctx.arc(s.x,s.y,s.r,0,Math.PI*2);
-
-        ctx.fill();
-
-        s.y += s.d;
-
-        if(s.y > canvas.height){
-
-            s.y = 0;
-            s.x = Math.random()*canvas.width;
-        }
-    }
-
-    requestAnimationFrame(drawStars);
-}
-
-drawStars();
-
-/* 点击爆炸爱心 */
-
-document.addEventListener("click",(e)=>{
-
-    document.getElementById("bgm").play();
-
-    createExplosion(e.clientX,e.clientY);
-
-    changeAI();
-});
-
-function createExplosion(x,y){
-
-    for(let i=0;i<35;i++){
-
-        let heart = document.createElement("div");
-
-        heart.innerHTML = "❤";
-
-        heart.style.position="fixed";
-
-        heart.style.left=x+"px";
-        heart.style.top=y+"px";
-
-        heart.style.fontSize=(Math.random()*30+20)+"px";
-
-        heart.style.color=
-        `hsl(${Math.random()*360},100%,70%)`;
-
-        heart.style.pointerEvents="none";
-
-        heart.style.zIndex=999;
-
-        heart.style.transition="1.8s";
-
-        document.body.appendChild(heart);
-
-        let dx=(Math.random()-0.5)*500;
-        let dy=(Math.random()-0.5)*500;
-
-        setTimeout(()=>{
-
-            heart.style.transform=
-            `translate(${dx}px,${dy}px)
-            scale(0)
-            rotate(720deg)`;
-
-            heart.style.opacity=0;
-
-        },10);
-
-        setTimeout(()=>{
-
-            heart.remove();
-
-        },1800);
-    }
-}
-
-/* 鼠标流光 */
-
-document.addEventListener("mousemove",(e)=>{
-
-    let dot=document.createElement("div");
-
-    dot.style.position="fixed";
-
-    dot.style.left=e.clientX+"px";
-    dot.style.top=e.clientY+"px";
-
-    dot.style.width="10px";
-    dot.style.height="10px";
-
-    dot.style.borderRadius="50%";
-
-    dot.style.background="#ff4fa3";
-
-    dot.style.boxShadow=
-    "0 0 10px #ff4fa3";
-
-    dot.style.pointerEvents="none";
-
-    dot.style.zIndex=999;
-
-    document.body.appendChild(dot);
-
-    setTimeout(()=>{
-
-        dot.style.transition="1s";
-
-        dot.style.opacity=0;
-
-        dot.style.transform="scale(3)";
-
-    },10);
-
-    setTimeout(()=>{
-
-        dot.remove();
-
-    },1000);
-});
-
-/* AI互动 */
-
-const aiText=[
-
-"❤ 张桂林该睡觉啦",
-
-"✨ 熬夜会变成小熊猫哦",
-
-"🌙 晚安比熬夜更浪漫",
-
-"💤 今天也辛苦啦",
-
-"❤ 早点休息吧"
+// 你的所有比分（完整）
+const scores = [
+"1:0","2:0","2:1","3:0","3:1",
+"3:2","4:0","4:1","4:2","5:0",
+"5:1","5:2","胜其它",
+"0:0","1:1","2:2","3:3","平其它",
+"0:1","0:2","1:2","0:3","1:3",
+"2:3","0:4","1:4","2:4","0:5",
+"1:5","2:5","负其它"
 ];
 
-function changeAI(){
+let timer = null;
 
-    let ai=document.getElementById("aiBox");
+// 老虎机滚动效果
+function startDraw(){
 
-    ai.innerHTML=
-    aiText[Math.floor(Math.random()*aiText.length)];
+    let i = 0;
+
+    // 防止重复点击
+    clearInterval(timer);
+
+    timer = setInterval(() => {
+        const randomIndex = Math.floor(Math.random() * scores.length);
+        document.getElementById("result").innerText = scores[randomIndex];
+        i++;
+    }, 80); // 滚动速度
+
+    // 3秒后停止
+    setTimeout(() => {
+        clearInterval(timer);
+
+        const finalIndex = Math.floor(Math.random() * scores.length);
+        document.getElementById("result").innerText = scores[finalIndex];
+
+    }, 3000);
 }
-
-/* 手机尺寸变化 */
-
-window.addEventListener("resize",()=>{
-
-    canvas.width=window.innerWidth;
-    canvas.height=window.innerHeight;
-});
 
 </script>
 
