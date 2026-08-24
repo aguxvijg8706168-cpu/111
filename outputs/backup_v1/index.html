@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="description" content="一封写给远方朋友嘉嘉的回信与旅行摄影集。">
+  <title>展信“嘉”</title>
+  
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- 顶部阅读进度条 -->
+  <div class="reading-progress" id="readingProgress" aria-hidden="true"></div>
+
+  <!-- 悬浮微型音乐控制器 -->
+  <aside class="audio-widget" id="audioWidget" aria-label="背景音乐控制">
+    <button class="audio-btn" id="audioBtn" title="播放 / 暂停音乐" aria-label="播放背景音乐">
+      <span class="audio-disc">
+        <svg class="audio-icon audio-icon--note" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+          <path d="M9 18V5l12-2v13"></path>
+          <circle cx="6" cy="18" r="3"></circle>
+          <circle cx="18" cy="16" r="3"></circle>
+        </svg>
+      </span>
+      <span class="audio-label" id="audioLabel">音乐</span>
+    </button>
+    <audio id="bgmAudio" src="assets/audio/bgm.mp3" preload="metadata" loop></audio>
+  </aside>
+
+  <!-- 网页主体容器 -->
+  <div class="book-container">
+
+    <!-- ==============================================
+         封面首屏 / Cover Hero
+         ============================================== -->
+    <header class="cover-section" id="cover">
+      <div class="cover-inner">
+        <div class="cover-meta reveal-item">
+          <span class="meta-tag">LETTER NO. 01</span>
+          <span class="meta-dot">·</span>
+          <span class="meta-date">2026.08.24</span>
+          <span class="meta-dot">·</span>
+          <span class="meta-loc">CHONGQING TO TIBET</span>
+        </div>
+
+        <h1 class="cover-title reveal-item">展信“嘉”</h1>
+
+        <div class="cover-subtitle reveal-item">
+          <p>有些话，适合写在信里。</p>
+          <p>有些路，适合留在照片里。</p>
+        </div>
+
+        <div class="cover-action reveal-item">
+          <a href="#letterStart" class="btn-open-letter" id="btnOpenLetter">
+            <span>打开这封信</span>
+            <svg class="icon-down" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M7 10l5 5 5-5"/>
+            </svg>
+          </a>
+        </div>
+      </div>
+
+      <div class="cover-scroll-hint" aria-hidden="true">
+        <span class="scroll-line"></span>
+      </div>
+    </header>
+
+    <!-- ==============================================
+         信件正文与摄影叙事 / Main Letter Content
+         ============================================== -->
+    <main class="letter-content" id="letterStart">
+
+      <!-- ==============================================
+           CHAPTER 01 / 写给远方
+           ============================================== -->
+      <section class="chapter-block" id="chapter1">
+        <div class="chapter-header reveal-item">
+          <div class="chapter-index">01 / 05</div>
+          <h2 class="chapter-title">写给远方</h2>
+          <div class="chapter-divider"></div>
+        </div>
+
+        <div class="letter-prose reveal-item">
+          <p class="salutation">TO：嘉嘉</p>
+          <p>很高兴今天收到你这封跨越山海、来自远方的信。</p>
+          <p>想来想去，我也想用书信这样一种特别的方式，认真回馈这份心意。</p>
+          <p>转眼我们已经相识 16 个月了。时光匆匆，一晃便走到了现在。</p>
+        </div>
+
+        <!-- 照片组 01：双联记忆卡片 + 宽幅山海 -->
+        <div class="photo-spread spread-diptych reveal-item">
+          <figure class="photo-card" data-index="1">
+            <div class="photo-frame">
+              <img src="assets/photos/1.jpg" alt="记忆碎片 01" loading="lazy" class="photo-img">
+            </div>
+            <figcaption class="photo-caption">01 / 28</figcaption>
+          </figure>
+
+          <figure class="photo-card" data-index="2">
+            <div class="photo-frame">
+              <img src="assets/photos/2.jpg" alt="记忆碎片 02" loading="lazy" class="photo-img">
+            </div>
+            <figcaption class="photo-caption">02 / 28</figcaption>
+          </figure>
+        </div>
+
+        <div class="photo-spread spread-wide reveal-item">
+          <figure class="photo-card photo-card--wide" data-index="3">
+            <div class="photo-frame">
+              <img src="assets/photos/3.jpg" alt="记忆碎片 03" loading="lazy" class="photo-img">
+            </div>
+            <figcaption class="photo-caption">03 / 28 · 跨越山海的旷野</figcaption>
+          </figure>
+        </div>
+      </section>
+
+      <!-- ==============================================
+           CHAPTER 02 / 彼此映照
+           ============================================== -->
+      <section class="chapter-block" id="chapter2">
+        <div class="chapter-header reveal-item">
+          <div class="chapter-index">02 / 05</div>
+          <h2 class="chapter-title">彼此映照</h2>
+          <div class="chapter-divider"></div>
+        </div>
+
+        <div class="letter-prose reveal-item">
+          <p>当初因为主持相识，虽同在重庆，却身处不同校园，平日里也没有太多机会见面。人和人之间，本就是在彼此映照、彼此学习的。</p>
+          <p class="emphasis-text">而在你身上，我真切看见了那份难得的洒脱与勇敢。</p>
+        </div>
+
+        <!-- 照片组 02：竖幅三联交错 + 宽幅地平线 -->
+        <div class="photo-spread spread-triptych reveal-item">
+          <figure class="photo-card" data-index="4">
+            <div class="photo-frame">
+              <img src="assets/photos/4.jpg" alt="记忆碎片 04" loading="lazy" class="photo-img">
+            </div>
+            <figcaption class="photo-caption">04 / 28</figcaption>
+          </figure>
+
+          <figure class="photo-card photo-card--offset" data-index="5">
+            <div class="photo-frame">
+              <img src="assets/photos/5.jpg" alt="记忆碎片 05" loading="lazy" class="photo-img">
+            </div>
+            <figcaption class="photo-caption">05 / 28</figcaption>
+          </figure>
+
+          <figure class="photo-card" data-index="6">
+            <div class="photo-frame">
+              <img src="assets/photos/6.jpg" alt="记忆碎片 06" loading="lazy" class="photo-img">
+            </div>
+            <figcaption class="photo-caption">06 / 28</figcaption>
+          </figure>
+        </div>
+
+        <div class="photo-spread spread-staggered reveal-item">
+          <figure class="photo-card" data-index="7">
+            <div class="photo-frame">
+              <img src="assets/photos/7.jpg" alt="记忆碎片 07" loading="lazy" class="photo-img">
+            </div>
+            <figcaption class="photo-caption">07 / 28</figcaption>
+          </figure>
+
+          <figure class="photo-card" data-index="8">
+            <div class="photo-frame">
+              <img src="assets/photos/8.jpg" alt="记忆碎片 08" loading="lazy" class="photo-img">
+            </div>
+            <figcaption class="photo-caption">08 / 28</figcaption>
+          </figure>
+        </div>
+      </section>
+
+      <!-- ==============================================
+           CHAPTER 03 / 旷野与风雪
+           ============================================== -->
+      <section class="chapter-block" id="chapter3">
+        <div class="chapter-header reveal-item">
+          <div class="chapter-index">03 / 05</div>
+          <h2 class="chapter-title">旷野与风雪</h2>
+          <div class="chapter-divider"></div>
+        </div>
+
+        <div class="letter-prose reveal-item">
+          <p>大多数人没有勇气独自奔赴远方，而你，一个人走过许多座城市，踏过北京的街巷，奔赴西藏的旷野，也远赴俄罗斯感受异国的风雪。</p>
+        </div>
+
+        <!-- 照片组 03-A：错落剪影与街巷 -->
+        <div class="photo-spread spread-asymmetric reveal-item">
+          <figure class="photo-card photo-card--vertical" data-index="9">
+            <div class="photo-frame">
+              <img src="assets/photos/9.jpg" alt="记忆碎片 09" loading="lazy" class="photo-img">
+            </div>
+            <figcaption class="photo-caption">09 / 28</figcaption>
+          </figure>
+
+          <figure class="photo-card photo-card--horizontal" data-index="10">
+            <div class="photo-frame">
+              <img src="assets/photos/10.jpg" alt="记忆碎片 10" loading="lazy" class="photo-img">
+            </div>
+            <figcaption class="photo-caption">10 / 28</figcaption>
+          </figure>
+        </div>
+
+        <div class="letter-prose reveal-item">
+          <p>看你朋友圈记录下一路的所见所思，那些山川、落日，还有你内心的纠结与清醒，我都看在眼里，也由衷地佩服。</p>
+          <p>读你寄来的明信片，字里行间都是真诚。</p>
+          <p>你一直在路上，看遍世间风景，也不断与内心的自己对话。</p>
+        </div>
+
+        <!-- 照片组 03-B：旅途画卷 11, 12, 13, 14 -->
+        <div class="photo-spread spread-gallery-2x2 reveal-item">
+          <figure class="photo-card" data-index="11">
+            <div class="photo-frame">
+              <img src="assets/photos/11.jpg" alt="记忆碎片 11" loading="lazy" class="photo-img">
+            </div>
+            <figcaption class="photo-caption">11 / 28</figcaption>
+          </figure>
+
+          <figure class="photo-card" data-index="12">
+            <div class="photo-frame">
+              <img src="assets/photos/12.jpg" alt="记忆碎片 12" loading="lazy" class="photo-img">
+            </div>
+            <figcaption class="photo-caption">12 / 28</figcaption>
+          </figure>
+
+          <figure class="photo-card" data-index="13">
+            <div class="photo-frame">
+              <img src="assets/photos/13.jpg" alt="记忆碎片 13" loading="lazy" class="photo-img">
+            </div>
+            <figcaption class="photo-caption">13 / 28</figcaption>
+          </figure>
+
+          <figure class="photo-card" data-index="14">
+            <div class="photo-frame">
+              <img src="assets/photos/14.jpg" alt="记忆碎片 14" loading="lazy" class="photo-img">
+            </div>
+            <figcaption class="photo-caption">14 / 28</figcaption>
+          </figure>
+        </div>
+      </section>
+
+      <!-- ==============================================
+           CHAPTER 04 / 善待自己与慢下来的力量
+           ============================================== -->
+      <section class="chapter-block" id="chapter4">
+        <div class="chapter-header reveal-item">
+          <div class="chapter-index">04 / 05</div>
+          <h2 class="chapter-title">善待自己</h2>
+          <div class="chapter-divider"></div>
+        </div>
+
+        <div class="letter-prose reveal-item">
+          <p>我知道，旅途不会永远浪漫。路上也会有疲惫、迷茫，会有情绪低落的时候。</p>
+          <p class="highlight-quote">所以我更希望你在向外奔赴、热烈拥抱世界的同时，也能够好好善待自己。</p>
+        </div>
+
+        <!-- 照片组 04-A：静谧时刻 15, 16 -->
+        <div class="photo-spread spread-duo reveal-item">
+          <figure class="photo-card" data-index="15">
+            <div class="photo-frame">
+              <img src="assets/photos/15.jpg" alt="记忆碎片 15" loading="lazy" class="photo-img">
+            </div>
+            <figcaption class="photo-caption">15 / 28</figcaption>
+          </figure>
+
+          <figure class="photo-card" data-index="16">
+            <div class="photo-frame">
+              <img src="assets/photos/16.jpg" alt="记忆碎片 16" loading="lazy" class="photo-img">
+            </div>
+            <figcaption class="photo-caption">16 / 28</figcaption>
+          </figure>
+        </div>
+
+        <!-- 电影宽幅过渡 17 -->
+        <div class="photo-spread spread-cinematic reveal-item">
+          <figure class="photo-card photo-card--cinematic" data-index="17">
+            <div class="photo-frame">
+              <img src="assets/photos/17.jpg" alt="记忆碎片 17" loading="lazy" class="photo-img">
+            </div>
+            <figcaption class="photo-caption">17 / 28 · 风景与驻足</figcaption>
+          </figure>
+        </div>
+
+        <div class="letter-prose letter-prose--spaced reveal-item">
+          <p>不必事事都逼着自己变得强大。</p>
+          <p>允许自己偶尔脆弱，也允许脚步慢一点。</p>
+          <p class="accent-line">人生并不是一场必须时刻向前的竞赛。</p>
+          <p>有时候，停下来看看沿途的风景，也是一种抵达。</p>
+        </div>
+
+        <!-- 照片组 04-B：18, 19, 20 -->
+        <div class="photo-spread spread-story reveal-item">
+          <div class="story-left">
+            <figure class="photo-card" data-index="18">
+              <div class="photo-frame">
+                <img src="assets/photos/18.jpg" alt="记忆碎片 18" loading="lazy" class="photo-img">
+              </div>
+              <figcaption class="photo-caption">18 / 28</figcaption>
+            </figure>
+            <figure class="photo-card" data-index="19">
+              <div class="photo-frame">
+                <img src="assets/photos/19.jpg" alt="记忆碎片 19" loading="lazy" class="photo-img">
+              </div>
+              <figcaption class="photo-caption">19 / 28</figcaption>
+            </figure>
+          </div>
+
+          <div class="story-right">
+            <figure class="photo-card photo-card--tall" data-index="20">
+              <div class="photo-frame">
+                <img src="assets/photos/20.jpg" alt="记忆碎片 20" loading="lazy" class="photo-img">
+              </div>
+              <figcaption class="photo-caption">20 / 28</figcaption>
+            </figure>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==============================================
+           CHAPTER 05 / 愿你所见皆辽阔 (情绪高潮与祝福)
+           ============================================== -->
+      <section class="chapter-block chapter-block--climax" id="chapter5">
+        <div class="chapter-header reveal-item">
+          <div class="chapter-index">05 / 05</div>
+          <h2 class="chapter-title">所见皆辽阔</h2>
+          <div class="chapter-divider"></div>
+        </div>
+
+        <!-- 视觉高潮 01 -->
+        <div class="climax-banner reveal-item">
+          <div class="quote-mark">“</div>
+          <p class="climax-text-main">愿你永远保有这份奔赴山海的热忱，</p>
+          <p class="climax-text-sub">所见皆辽阔，所行皆坦荡。</p>
+        </div>
+
+        <!-- 照片组 05-A：群山与光影 21, 22, 23, 24, 25 -->
+        <div class="photo-spread spread-mosaic reveal-item">
+          <div class="mosaic-top">
+            <figure class="photo-card" data-index="21">
+              <div class="photo-frame">
+                <img src="assets/photos/21.jpg" alt="记忆碎片 21" loading="lazy" class="photo-img">
+              </div>
+              <figcaption class="photo-caption">21 / 28</figcaption>
+            </figure>
+            <figure class="photo-card" data-index="22">
+              <div class="photo-frame">
+                <img src="assets/photos/22.jpg" alt="记忆碎片 22" loading="lazy" class="photo-img">
+              </div>
+              <figcaption class="photo-caption">22 / 28</figcaption>
+            </figure>
+          </div>
+
+          <div class="mosaic-bottom">
+            <figure class="photo-card" data-index="23">
+              <div class="photo-frame">
+                <img src="assets/photos/23.jpg" alt="记忆碎片 23" loading="lazy" class="photo-img">
+              </div>
+              <figcaption class="photo-caption">23 / 28</figcaption>
+            </figure>
+            <figure class="photo-card" data-index="24">
+              <div class="photo-frame">
+                <img src="assets/photos/24.jpg" alt="记忆碎片 24" loading="lazy" class="photo-img">
+              </div>
+              <figcaption class="photo-caption">24 / 28</figcaption>
+            </figure>
+            <figure class="photo-card" data-index="25">
+              <div class="photo-frame">
+                <img src="assets/photos/25.jpg" alt="记忆碎片 25" loading="lazy" class="photo-img">
+              </div>
+              <figcaption class="photo-caption">25 / 28</figcaption>
+            </figure>
+          </div>
+        </div>
+
+        <!-- 视觉高潮 02 -->
+        <div class="climax-banner climax-banner--secondary reveal-item">
+          <p class="climax-text-main">愿你历经万水千山，依旧忠于自己；</p>
+          <p class="climax-text-sub">既有着看世界的勇气，</p>
+          <p class="climax-text-sub">也有安放自己的底气。</p>
+        </div>
+
+        <!-- 照片组 05-B：26, 27 -->
+        <div class="photo-spread spread-duo-clean reveal-item">
+          <figure class="photo-card" data-index="26">
+            <div class="photo-frame">
+              <img src="assets/photos/26.jpg" alt="记忆碎片 26" loading="lazy" class="photo-img">
+            </div>
+            <figcaption class="photo-caption">26 / 28</figcaption>
+          </figure>
+          <figure class="photo-card" data-index="27">
+            <div class="photo-frame">
+              <img src="assets/photos/27.jpg" alt="记忆碎片 27" loading="lazy" class="photo-img">
+            </div>
+            <figcaption class="photo-caption">27 / 28</figcaption>
+          </figure>
+        </div>
+
+        <!-- 最终祝福与落款 -->
+        <div class="epilogue-section reveal-item">
+          <p class="final-wish">愿平安常伴，万事顺意。</p>
+          
+          <div class="signature-block">
+            <div class="signature-from">From：天宇</div>
+            <div class="signature-date">2026.08.24</div>
+          </div>
+        </div>
+
+        <!-- 终章收尾照片 28 -->
+        <div class="final-photo-spread reveal-item">
+          <figure class="photo-card photo-card--final" data-index="28">
+            <div class="photo-frame">
+              <img src="assets/photos/28.jpg" alt="记忆碎片 28 · 尾声" loading="lazy" class="photo-img">
+            </div>
+            <figcaption class="photo-caption">28 / 28 · 终章 · 山河长在</figcaption>
+          </figure>
+        </div>
+
+      </section>
+
+    </main>
+
+    <!-- 页脚 -->
+    <footer class="site-footer reveal-item">
+      <div class="footer-inner">
+        <p class="footer-note">A Private Letter & Photography Collection</p>
+        <p class="footer-copy">2026 · 给远方的嘉嘉</p>
+      </div>
+    </footer>
+
+  </div>
+
+  <!-- ==============================================
+       图片 Lightbox 全屏预览组件
+       ============================================== -->
+  <div class="lightbox" id="lightbox" aria-hidden="true" role="dialog" aria-label="照片大图查看">
+    <div class="lightbox-backdrop" id="lightboxBackdrop"></div>
+    <button class="lightbox-close" id="lightboxClose" title="关闭 (Esc)" aria-label="关闭预览">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+        <line x1="18" y1="6" x2="6" y2="18"></line>
+        <line x1="6" y1="6" x2="18" y2="18"></line>
+      </svg>
+    </button>
+    <div class="lightbox-content">
+      <img src="" alt="" class="lightbox-img" id="lightboxImg">
+      <div class="lightbox-info">
+        <span class="lightbox-counter" id="lightboxCounter"></span>
+        <span class="lightbox-caption" id="lightboxCaption"></span>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
